@@ -1,0 +1,96 @@
+* {
+  box-sizing: border-box;
+  font-family: "Open Sans", sans-serif;
+  font-weight: normal;
+  font-size: 14px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+body {
+  overflow-x: hidden;
+}
+
+/*PAGE HEADER*/
+.ant-page-header {
+  background-color: white !important;
+  padding: 8px 12px !important;
+}
+
+.ant-page-header .ant-page-header-heading .ant-page-header-heading-left .ant-page-header-heading-title {
+  font-size: 18px !important;
+  font-family: OpenSans-Semibold;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+/*SEARCH BOX*/
+.search-box {
+  padding: 8px;
+  background-color: white;
+  margin-top: 12px;
+  border-radius: 2px;
+}
+
+.search-box .ant-col {
+  padding: 0px 5px;
+}
+
+.search-box .ant-select-selector {
+  width: 100%;
+}
+
+.search-box .total-row {
+  text-align: right;
+  transform: translateY(5px);
+  font-family: OpenSans-Semibold;
+  color: red;
+}
+
+/*TABLE BOX*/
+.table-box {
+  padding: 8px;
+  margin-top: 12px;
+  background-color: white;
+  border-radius: 2px;
+}
+
+/*TABLE*/
+.ant-table-thead .ant-table-cell {
+  font-family: OpenSans-Semibold;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+/*MODAL*/
+.ant-modal-header .ant-modal-title {
+  font-family: OpenSans-Semibold;
+}
+
+/*FORM*/
+.ant-form-item-label label {
+  font-family: OpenSans-Semibold;
+  color: gray !important;
+}
+
+/*SELECT*/
+.ant-select-item-option-selected .ant-select-item-option-content {
+  font-family: OpenSans-Semibold;
+}
+
+/*NOTIFICATION*/
+.ant-notification-notice-message {
+  font-family: OpenSans-Semibold;
+}
+
+/*BUTTON*/
+.ant-btn-primary span {
+  color: white !important;
+  font-family: OpenSans-Semibold;
+}
+
+.ant-btn-background-ghost span {
+  color: #1890ff !important;
+}
+
+/*TAG*/
+.ant-tag {
+  font-family: OpenSans-Semibold;
+}
