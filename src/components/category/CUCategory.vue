@@ -32,7 +32,7 @@
         label="STT hiển thị"
         name="order"
       >
-        <a-input-number v-model:value="formState.order" :style="{ width: '100%' }" />
+        <a-input-number v-model:value="formState.order" :style="{ width: '100%' }" min="0" />
       </a-form-item>
 
       <a-form-item v-if="type === 'update'" label="Trạng thái" name="status">
@@ -46,14 +46,9 @@
         v-model="formState.imageUrl"
         :rules="[{ required: true, message: 'Vui lòng chọn icon danh mục' }]"
         label="Icon danh mục"
-        name="imageUrl"
+        name="file"
       >
-        <UploadImage
-          v-model="formState.imageUrl"
-          :defaultFileList="defaultFileList"
-          :totalFile="1"
-          @uploadImageSuccess="handleUploadImage"
-        />
+        <UploadImage v-model="formState.file" :totalFile="1" path-upload="list-category/" />
       </a-form-item>
     </a-form>
   </a-modal>
@@ -66,7 +61,6 @@ import { Constants } from "@/commons";
 import type { FormInstance } from "ant-design-vue";
 import UploadImage from "@/components/UploadImage.vue";
 import { useCreate, useUpdate } from "@/services";
-import type { IFile } from "@/commons/Interfaces";
 import ParentCategorySelect from "@/components/category/ParentCategorySelect.vue";
 
 interface IFormState {
@@ -76,6 +70,7 @@ interface IFormState {
   imageUrl: string | undefined;
   categoryId: number | undefined;
   status: 0 | 1 | undefined;
+  file: any;
 }
 
 let defaultFormState: IFormState = {
@@ -85,6 +80,7 @@ let defaultFormState: IFormState = {
   imageUrl: undefined,
   order: undefined,
   id: undefined,
+  file: [],
 };
 
 export default defineComponent({
@@ -102,21 +98,6 @@ export default defineComponent({
     const type = ref<"add" | "update">("add");
 
     let formState = reactive<IFormState>(defaultFormState);
-
-    const defaultFileList = computed(() => {
-      if (formState.imageUrl) {
-        return [
-          {
-            uid: "default-file-list",
-            name: "image.png",
-            status: "done",
-            url: formState.imageUrl,
-          },
-        ];
-      }
-
-      return undefined;
-    });
 
     const { loadingCreate, createRecord } = useCreate();
     const { loadingUpdate, updateRecord } = useUpdate();
@@ -147,8 +128,17 @@ export default defineComponent({
         formState.imageUrl = data.imageUrl;
         formState.order = data.order;
         formState.id = data.id;
+        formState.file = [
+          {
+            uid: "default-file-list",
+            name: "image.png",
+            status: "done",
+            url: formState.imageUrl,
+          },
+        ];
       } else {
         resetForm();
+        formState.file = [];
       }
 
       showModal();
@@ -157,11 +147,13 @@ export default defineComponent({
     const onCreate = async () => {
       if (type.value === "add") {
         delete formState.id;
+        const reqCategory = { ...formState };
+        delete reqCategory.file;
 
         if (!isChildForm.value) {
           delete formState.categoryId;
 
-          const result = await createRecord("/category/", formState, "Tạo danh mục sản phẩm thành công");
+          const result = await createRecord("/category/", reqCategory, "Tạo danh mục sản phẩm thành công");
 
           if (result) {
             formRef.value?.resetFields();
@@ -169,8 +161,8 @@ export default defineComponent({
             closeModal();
           }
         } else {
-          formState.categoryId = props.parentCategoryId;
-          const result = await createRecord("/category/child-cate", formState, "Tạo danh mục con thành công");
+          reqCategory.categoryId = props.parentCategoryId;
+          const result = await createRecord("/category/child-cate", reqCategory, "Tạo danh mục con thành công");
 
           if (result) {
             formRef.value?.resetFields();
@@ -183,10 +175,13 @@ export default defineComponent({
 
     const onUpdate = async () => {
       if (type.value === "update") {
-        if (!isChildForm.value) {
-          delete formState.categoryId;
+        const reqCategory = { ...formState };
 
-          const result = await updateRecord(`/category/${formState.id}`, formState, "Cập nhật danh mục thành công");
+        if (!isChildForm.value) {
+          delete reqCategory.categoryId;
+          delete reqCategory.file;
+
+          const result = await updateRecord(`/category/${reqCategory.id}`, reqCategory, "Cập nhật danh mục thành công");
 
           if (result) {
             context.emit("onSubmitSuccess");
@@ -194,11 +189,11 @@ export default defineComponent({
             closeModal();
           }
         } else {
-          formState.categoryId = props.parentCategoryId;
+          reqCategory.categoryId = props.parentCategoryId;
 
           const result = await updateRecord(
-            `/category/child-cate/${formState.id}`,
-            formState,
+            `/category/child-cate/${reqCategory.id}`,
+            reqCategory,
             "Cập nhật danh mục con thành công"
           );
 
@@ -215,19 +210,12 @@ export default defineComponent({
       try {
         const value = await formRef.value?.validateFields();
         if (value) {
+          formState.imageUrl = formState.file[0].url;
           onCreate();
           onUpdate();
         }
       } catch (e) {
         console.error(e);
-      }
-    };
-
-    const handleUploadImage = (listFile: IFile[]) => {
-      if (listFile?.length) {
-        formState.imageUrl = listFile[0]?.url;
-      } else {
-        formState.imageUrl = undefined;
       }
     };
 
@@ -238,12 +226,10 @@ export default defineComponent({
       type,
       loadingCreate,
       loadingUpdate,
-      defaultFileList,
       isChildForm,
       onSubmit,
       onOpenModal,
       closeModal,
-      handleUploadImage,
     };
   },
 });

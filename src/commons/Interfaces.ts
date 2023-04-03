@@ -1,6 +1,9 @@
 export * from "./interface/User.interface";
 export * from "./interface/Category.interface";
 export * from "./interface/Product.interface";
+export * from "./interface/Order.interface";
+export * from "./interface/Customer";
+export * from "./interface/Voucher.interface";
 
 export interface IColumn {
   title: string;

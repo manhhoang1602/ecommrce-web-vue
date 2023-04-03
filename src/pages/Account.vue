@@ -11,13 +11,10 @@
     <div class="search-box">
       <a-row>
         <a-col :span="6">
-          <a-input v-model:value="payload.search" placeholder="Tên hoặc số điện thoại" />
+          <InputSearch placeholder="Tên hoặc số điện thoại" @onChange="(value) => (payload.search = value)" />
         </a-col>
         <a-col :span="6">
-          <a-select v-model:value="payload.status" allow-clear placeholder="Trạng thái hoạt động" style="width: 100%">
-            <a-select-option :value="Constants.STATUS.ACTIVE">Đang hoạt động</a-select-option>
-            <a-select-option :value="Constants.STATUS.INACTIVE">Ngưng hoạt động</a-select-option>
-          </a-select>
+          <StatusSelect v-model="payload.status" placeholder="Trạng thái hoạt động" />
         </a-col>
         <a-col :span="6">
           <a-select v-model:value="payload.role" allow-clear placeholder="Loại tài khoản" style="width: 100%">
@@ -50,61 +47,21 @@
             <RoleTag :role="record.role" />
           </template>
         </template>
+
         <template #expandedRowRender="{ record }">
-          <a-card :bordered="false">
-            <template #actions>
-              <a-button
-                v-if="record.status === Constants.STATUS.INACTIVE"
-                :loading="loadingStatus"
-                class="btn-status-active"
-                type="text"
-                @click="onChangeStatus(record.id, Constants.STATUS.ACTIVE)"
-              >
-                <template #icon>
-                  <i class="fad fa-toggle-on"></i>
-                </template>
-                Hoạt động
-              </a-button>
-              <a-button
-                v-if="record.status === Constants.STATUS.ACTIVE"
-                :loading="loadingStatus"
-                class="btn-status-inactive"
-                type="text"
-                @click="onChangeStatus(record.id, Constants.STATUS.INACTIVE)"
-              >
-                <template #icon>
-                  <i class="fal fa-toggle-off"></i>
-                </template>
-                Ngưng hoạt động
-              </a-button>
-
-              <a-button
-                :loading="loadingResetPassword"
-                class="btn-reset-pass"
-                type="text"
-                @click="onResetPassword(record.id, record.phone)"
-              >
-                <template #icon>
-                  <i class="far fa-sync-alt"></i>
-                </template>
-                Reset mật khẩu
-              </a-button>
-
-              <a-button class="btn-edit" type="text" @click="onUpdateUser(record)">
-                <template #icon>
-                  <i class="fal fa-edit"></i>
-                </template>
-                Chỉnh sửa
-              </a-button>
-
-              <a-button :loading="loadingDelete" class="btn-delete" type="text" @click="onDeleteUser(record.id)">
-                <template #icon>
-                  <i class="fal fa-trash-alt"></i>
-                </template>
-                Xóa
-              </a-button>
-            </template>
-          </a-card>
+          <ListBtnAction
+            :idActive="idRecordActive"
+            :loadingChangeStatus="loadingStatus"
+            :loadingDelete="loadingDelete"
+            :loadingResetPassword="loadingResetPassword"
+            :record="record"
+            @onChangeStatus="
+              onChangeStatus(record.id, record.status ? Constants.STATUS.INACTIVE : Constants.STATUS.ACTIVE)
+            "
+            @onDelete="onDeleteUser(record.id)"
+            @onEdit="onUpdateUser(record)"
+            @onResetPassword="onResetPassword(record.id, record.phone)"
+          />
         </template>
       </a-table>
     </div>
@@ -119,9 +76,11 @@ import CUModalUser from "@/components/user/CUModalUser.vue";
 import { useChangeStatus, useListUser, useResetPassword } from "@/services";
 import StatusTag from "@/components/StatusTag.vue";
 import RoleTag from "@/components/RoleTag.vue";
-import { debounce } from "lodash";
 import { useDelete } from "@/services/UseDelete";
 import Utils from "@/commons/Utils";
+import InputSearch from "@/components/InputSearch.vue";
+import StatusSelect from "@/components/StatusSelect.vue";
+import ListBtnAction from "@/components/ListBtnAction.vue";
 
 interface IPayload extends IBasePayload {
   role?: number;
@@ -129,9 +88,9 @@ interface IPayload extends IBasePayload {
 
 const columns: IColumn[] = [
   { title: "STT", dataIndex: "index", key: "index", width: 60, fixed: true },
-  { title: "Họ tên", dataIndex: "name", key: "name", fixed: true },
-  { title: "Số điện thoại", dataIndex: "phone", key: "phone" },
-  { title: "Email", dataIndex: "email", key: "email" },
+  { title: "Họ tên", dataIndex: "name", key: "name", fixed: true, width: 200 },
+  { title: "Số điện thoại", dataIndex: "phone", key: "phone", width: 150, fixed: true },
+  { title: "Email", dataIndex: "email", key: "email", width: 250 },
   { title: "Loại tài khoản", dataIndex: "role", width: 200, key: "role" },
   { title: "Trạng thái", dataIndex: "status", width: 200, key: "status" },
 ];
@@ -142,11 +101,9 @@ export default defineComponent({
       return Utils;
     },
   },
-  components: { RoleTag, StatusTag, CUModalUser },
+  components: { ListBtnAction, StatusSelect, InputSearch, RoleTag, StatusTag, CUModalUser },
   setup() {
-    const popupRef = ref<{
-      onOpenModal: (type: "add" | "update", data?: IAccount) => any;
-    }>();
+    const popupRef = ref<{ onOpenModal: (type: "add" | "update", data?: IAccount) => any }>();
     const dataTable = ref<IAccount[]>([]);
     const payload = reactive<IPayload>({
       page: Constants.PAYLOAD.PAGE,
@@ -160,6 +117,8 @@ export default defineComponent({
     const { loadingStatus, changeStatus } = useChangeStatus();
     const { loadingResetPassword, resetPassword } = useResetPassword();
     const { loadingDelete, deleteRecord } = useDelete();
+    const idRecordActive = ref<number>();
+
     const openCUModalUser = (type: "add" | "update", data?: IAccount) => {
       popupRef.value?.onOpenModal(type, data);
     };
@@ -172,23 +131,20 @@ export default defineComponent({
     };
 
     const onChangeStatus = async (id: number, status: 0 | 1) => {
-      const result = await changeStatus("/users/", id, status);
-
-      if (result) {
-        loadDataTable();
-      }
+      idRecordActive.value = id;
+      await changeStatus("/users/", id, status);
+      await loadDataTable();
     };
 
     const onResetPassword = (id: number, password: string) => {
+      idRecordActive.value = id;
       resetPassword(id, password);
     };
 
     const onDeleteUser = async (id: number) => {
-      const result = await deleteRecord(`/users/${id}`, "Xóa tài khoản thành công");
-
-      if (result) {
-        loadDataTable();
-      }
+      idRecordActive.value = id;
+      await deleteRecord(`/users/${id}`, "Xóa tài khoản thành công");
+      await loadDataTable();
     };
 
     const onUpdateUser = (data: IAccount) => {
@@ -205,25 +161,15 @@ export default defineComponent({
 
     onMounted(() => {
       loadDataTable();
-
-      const debouncedLoadDataTable = debounce(() => {
-        loadDataTable();
-      }, 500);
-
-      watch(
-        () => payload.search,
-        async () => {
-          debouncedLoadDataTable();
-        }
-      );
-
-      watch(
-        () => [payload.page, payload.role, payload.status],
-        async () => {
-          loadDataTable();
-        }
-      );
     });
+
+    watch(
+      () => payload,
+      async () => {
+        loadDataTable();
+      },
+      { deep: true }
+    );
 
     return {
       Constants,
@@ -236,6 +182,7 @@ export default defineComponent({
       loadingStatus,
       loadingResetPassword,
       loadingDelete,
+      idRecordActive,
       onAddUser,
       onUpdateUser,
       onDeleteUser,
@@ -249,78 +196,4 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss">
-.account-page {
-  .ant-btn-text {
-    span {
-      font-family: OpenSans-Semibold !important;
-    }
-  }
-
-  .btn-status-active {
-    span {
-      color: #1890ffff;
-    }
-
-    i {
-      font-size: 18px;
-      color: #1890ffff;
-
-      transform: translateY(2px);
-      margin-right: 4px;
-    }
-  }
-
-  .btn-status-inactive {
-    span {
-      color: gray;
-    }
-
-    i {
-      font-size: 18px;
-      color: gray;
-
-      transform: translateY(2px);
-      margin-right: 4px;
-    }
-  }
-
-  .btn-edit {
-    span {
-      color: orange;
-    }
-
-    i {
-      color: orange;
-      margin-right: 4px;
-    }
-  }
-
-  .btn-delete {
-    span {
-      color: red;
-    }
-
-    i {
-      color: red;
-      margin-right: 4px;
-    }
-  }
-
-  .btn-reset-pass {
-    span {
-      color: gray;
-    }
-
-    i {
-      color: gray;
-      margin-right: 4px;
-    }
-  }
-
-  .ant-card-actions {
-    border: 1px solid rgba(128, 128, 128, 0.2);
-    border-radius: 3px;
-  }
-}
-</style>
+<style lang="scss"></style>

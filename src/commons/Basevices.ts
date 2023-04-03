@@ -2,8 +2,6 @@ import Axios from "axios";
 import humps from "humps";
 import Notification from "@/components/notification/Notification";
 
-// import { Notification } from '../commons/notification/Notification'
-
 export interface IApiResponse<T> {
   status: number;
   body: T;
@@ -14,13 +12,13 @@ const DEFINE_CODE_ERROR = {
   JWT: 401,
 };
 
-// CONFIG SERVICE
+/*CONFIG SERVICE*/
 export const TOKEN_NAME: string = "token";
 export const BASE_URL: string = "http://localhost:3000";
 
 export const getToken = (): string | null => localStorage.getItem(TOKEN_NAME);
 
-// METHODS CALL API
+/*METHODS CALL API*/
 export const apiCall = async (
   url: string,
   method: "GET" | "PUT" | "POST" | "DELETE",
@@ -47,13 +45,6 @@ export const apiCall = async (
       data: data && method !== "GET" ? JSON.stringify(data) : undefined,
     })
       .then((next) => {
-        // check and log error
-        if (next.data.code === DEFINE_CODE_ERROR.AUTH || next.data.code === DEFINE_CODE_ERROR.JWT) {
-          setTimeout(() => {
-            window.location.href = "/";
-            localStorage.removeItem(TOKEN_NAME);
-          }, 500);
-        }
         if (next.data.payload) {
           // end
           resolve({
@@ -80,7 +71,16 @@ export const apiCall = async (
             status: 500,
           });
         }
-        // Notification.PushNotification('ERROR', 'Đã có lỗi xảy ra vui lòng thao tác lại.')
+
+        if (error.response.status === DEFINE_CODE_ERROR.JWT || error.response.status === DEFINE_CODE_ERROR.AUTH) {
+          Notification.Error(undefined, "Bạn không có quyền truy cập.");
+          setTimeout(() => {
+            window.location.href = "/";
+            localStorage.removeItem(TOKEN_NAME);
+          }, 1000);
+        } else {
+          Notification.Error(undefined, "Đã có lỗi xảy ra vui lòng thao tác lại.");
+        }
       });
   });
 };

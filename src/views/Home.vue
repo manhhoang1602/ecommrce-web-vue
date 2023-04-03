@@ -6,8 +6,8 @@
         <div class="box-user-login">
           <div class="avatar"></div>
           <div class="info">
-            <div class="name">tmhoang</div>
-            <div class="mail">manhhoang1602@gmail.com</div>
+            <div class="name">{{ userInfo?.name }}</div>
+            <div class="mail">{{ userInfo?.email }}</div>
           </div>
         </div>
         <Navbar />
@@ -23,6 +23,7 @@
 <script lang="ts">
 import { defineComponent } from "vue";
 import Navbar from "@/components/Navbar.vue";
+import { useUserInfo } from "@/services";
 import Header from "@/components/Header.vue";
 
 export default defineComponent({
@@ -31,7 +32,11 @@ export default defineComponent({
     Navbar,
   },
   setup() {
-    return {};
+    const { userInfo } = useUserInfo();
+
+    return {
+      userInfo,
+    };
   },
 });
 </script>

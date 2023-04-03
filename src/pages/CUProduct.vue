@@ -1,24 +1,26 @@
 <template>
   <div class="cu-product-page">
-    <a-page-header title="Thêm mới sản phẩm">
+    <a-page-header :title="isUpdateMode ? `Cập nhật sản phẩm` : `Thêm mới sản phẩm`">
       <template #extra>
         <a-button danger type="primary" @click="onCancel">Hủy</a-button>
-        <a-button :loading="loadingCreate" type="primary" @click="onSubmit"> Lưu </a-button>
+        <a-button :loading="loadingCreate || loadingUpdate" type="primary" @click="onSubmit"> Lưu </a-button>
       </template>
     </a-page-header>
 
-    <FormInfo ref="formInfoRef" />
-    <FormPrice ref="formPriceRef" />
-    <FormMedia ref="formMediaRef" />
+    <a-spin :spinning="loading">
+      <FormInfo ref="formInfoRef" />
+      <FormPrice ref="formPriceRef" />
+      <FormMedia ref="formMediaRef" />
+    </a-spin>
 
     <div class="wrapper-list-btn">
       <a-button danger style="margin-right: 10px" type="primary" @click="onCancel"> Hủy </a-button>
-      <a-button type="primary" @click="onSubmit">Lưu</a-button>
+      <a-button :loading="loadingUpdate || loadingCreate" type="primary" @click="onSubmit">Lưu</a-button>
     </div>
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import FormPrice from "@/components/product/FormPrice.vue";
 import FormInfo from "@/components/product/FormInfo.vue";
 import FormMedia from "@/components/product/FormMedia.vue";
@@ -30,22 +32,54 @@ import type {
   IReqProduct,
 } from "@/commons/interface/Product.interface";
 import Utils from "@/commons/Utils";
-import { useCreate } from "@/services";
+import { useCreate, useDetailProduct, useLoadFormUpdateProduct, useUpdate } from "@/services";
 import router from "@/router";
 import { Constants } from "@/commons";
+import type { IFile } from "@/commons/Interfaces";
 
 export default defineComponent({
   components: { FormMedia, FormInfo, FormPrice },
   setup() {
-    const formInfoRef = ref<{ onSubmit: () => any }>();
-    const formPriceRef = ref<{ onSubmit: () => any }>();
-    const formMediaRef = ref<{ onSubmit: () => any }>();
+    const formInfoRef = ref<{ onSubmit: () => any; loadForm: (data: IFormStateInfoProduct) => any }>();
+    const formPriceRef = ref<{
+      onSubmit: () => any;
+      loadForm: (data: IFormStateSinglePrice | IFormStateMultiPrice) => any;
+    }>();
+    const formMediaRef = ref<{ onSubmit: () => any; loadForm: (data: IFormStateMedia) => any }>();
 
     const { loadingCreate, createRecord } = useCreate();
+    const { loadingUpdate, updateRecord } = useUpdate();
+    const { loading, getDetailProduct } = useDetailProduct();
+
+    const id: any = router.currentRoute.value.params.id;
+    const isUpdateMode = computed(() => id);
+
+    const loadForm = async () => {
+      const productDetail = await getDetailProduct(id);
+
+      const { formPriceState, formMediaState, formInfoState } = useLoadFormUpdateProduct(productDetail);
+      formInfoRef.value?.loadForm(formInfoState);
+      formMediaRef.value?.loadForm(formMediaState);
+      formPriceRef.value?.loadForm(formPriceState);
+    };
 
     const goToListPage = () => {
       router.push("/product");
     };
+
+    const goToDetailPage = () => {
+      router.push(`/product/detail/${id}`);
+    };
+
+    const onCancel = () => {
+      goToListPage();
+    };
+
+    onMounted(() => {
+      if (id) {
+        loadForm();
+      }
+    });
 
     const onSubmit = async () => {
       const promises = [
@@ -65,15 +99,29 @@ export default defineComponent({
         const parentCategoryId: number = categoryId.parentId;
         const childCategoryId: number = categoryId.childId as number;
 
+        const reqImage = formStateMedia.listImage.map((value: IFile, index: number) => {
+          return {
+            url: value.url,
+            order: index,
+            type: Constants.PRODUCT_MEDIA_TYPE.IMAGE,
+          };
+        });
+
+        const reqVideo = formStateMedia.video.map((value: IFile, index: number) => {
+          return {
+            url: value.url,
+            order: index,
+            type: Constants.PRODUCT_MEDIA_TYPE.VIDEO,
+          };
+        });
+
         const reqProduct: IReqProduct = {
           ...formStateInfo,
           productClass: {
             create: [],
           },
           imageUrl: {
-            create: Utils.formatFileList(formStateMedia.listImage).map((value, index) => {
-              return { url: value.url, order: index };
-            }),
+            create: [...reqImage, ...reqVideo],
           },
           category: {
             connect: { id: parentCategoryId },
@@ -87,25 +135,49 @@ export default defineComponent({
 
         if (formStatePrice.type === "single") {
           reqProduct.price = (formStatePrice as IFormStateSinglePrice).productPrice;
+          reqProduct.discountPercent = (formStatePrice as IFormStateSinglePrice).discountPercent;
         }
 
         if (formStatePrice.type === "multi") {
           const product = (formStatePrice as IFormStateMultiPrice).dataTable.map((value, index) => {
+            if (id) {
+              return {
+                id: value.key,
+                price: Number(value.price),
+                firstClassName: value.firstClass,
+                secondClassName: value.secondClass,
+                isNotSale: value.status ? 1 : 0,
+              };
+            }
+
             return {
               price: Number(value.price),
               firstClassName: value.firstClass,
               secondClassName: value.secondClass,
+              isNotSale: value.status ? 1 : 0,
             };
           });
 
-          const firstProductClass = (formStatePrice as IFormStateMultiPrice).dataFormFirst.map((value) => {
+          const firstProductClass = (formStatePrice as IFormStateMultiPrice).dataFormFirst.map((value, index) => {
+            if (index === 0) {
+              return {
+                type: Constants.PRODUCT_TYPE_CLASS.FIRST_CLASS_NAME,
+                name: value.value,
+              };
+            }
             return {
               type: Constants.PRODUCT_TYPE_CLASS.FIRST,
               name: value.value,
             };
           });
 
-          const secondProductClass = (formStatePrice as IFormStateMultiPrice).dataFormFirst.map((value) => {
+          const secondProductClass = (formStatePrice as IFormStateMultiPrice).dataFormSecond.map((value, index) => {
+            if (index === 0) {
+              return {
+                type: Constants.PRODUCT_TYPE_CLASS.SECOND_CLASS_NAME,
+                name: value.value,
+              };
+            }
             return {
               type: Constants.PRODUCT_TYPE_CLASS.SECOND,
               name: value.value,
@@ -113,12 +185,14 @@ export default defineComponent({
           });
 
           reqProduct.product = {
-            create: product,
+            create: product as any,
           };
 
           reqProduct.productClass = {
             create: [...firstProductClass, ...secondProductClass],
           };
+
+          reqProduct.discountPercent = (formStatePrice as IFormStateMultiPrice).discountPercent;
         }
 
         const deleteKeyBeforeSubmit = () => {
@@ -130,15 +204,18 @@ export default defineComponent({
 
         deleteKeyBeforeSubmit();
 
-        await createRecord("/product", reqProduct, "Tạo mới sản phẩm thành công");
-        goToListPage();
+        if (id) {
+          const result = await updateRecord(`/product/${id}`, reqProduct, "Cập nhật sản phẩm thành công");
+          result && goToDetailPage();
+        } else {
+          const result = await createRecord("/product", reqProduct, "Tạo mới sản phẩm thành công");
+          if (result) {
+            goToListPage();
+          }
+        }
       } catch (error) {
         console.error(error);
       }
-    };
-
-    const onCancel = () => {
-      goToListPage();
     };
 
     return {
@@ -146,6 +223,10 @@ export default defineComponent({
       formPriceRef,
       formMediaRef,
       loadingCreate,
+      id,
+      loading,
+      loadingUpdate,
+      isUpdateMode,
       onSubmit,
       onCancel,
     };

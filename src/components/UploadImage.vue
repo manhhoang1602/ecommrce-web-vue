@@ -1,14 +1,14 @@
 <template>
   <div class="clearfix">
     <a-upload
-      v-model:file-list="fileList"
       :before-upload="beforeUpload"
-      action="https://apidev.tpmart.winds.vn/api/v1/files/uploadFile/1"
+      :custom-request="dummyRequest"
+      :file-list="modelValue"
       list-type="picture-card"
-      name="image"
+      @change="handleChange"
       @preview="handlePreview"
     >
-      <div v-if="fileList.length < totalFile">
+      <div v-if="modelValue?.length < totalFile || modelValue === undefined">
         <plus-outlined />
         <div style="margin-top: 8px">Tải file</div>
       </div>
@@ -20,10 +20,10 @@
 </template>
 <script lang="ts">
 import { PlusOutlined } from "@ant-design/icons-vue";
-import { defineComponent, onMounted, onUnmounted, ref, watch } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import type { UploadProps } from "ant-design-vue";
 import { message } from "ant-design-vue";
-import Utils from "@/commons/Utils";
+import { upload } from "@/FireBaseConfig";
 
 function getBase64(file: File) {
   return new Promise((resolve, reject) => {
@@ -38,9 +38,9 @@ export default defineComponent({
   components: {
     PlusOutlined,
   },
-  emits: ["uploadImageSuccess"],
-  props: ["defaultFileList", "totalFile"],
-  setup(props, context) {
+  defineEmits: ["update:modelValue"],
+  props: ["modelValue", "defaultFileList", "totalFile", "pathUpload"],
+  setup(props, { emit }: any) {
     const previewVisible = ref(false);
     const previewImage = ref("");
     const previewTitle = ref("");
@@ -61,32 +61,33 @@ export default defineComponent({
     };
 
     const beforeUpload = (file: UploadProps["fileList"][number]) => {
-      const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
-      if (!isJpgOrPng) {
-        message.error("Định dạng ảnh phải là JPEG hoặc PNG");
+      const isImage = file.type.includes("image");
+      if (!isImage) {
+        message.error("Không phải định dạng ảnh");
+        return false;
       }
       const isLt2M = file.size / 1024 / 1024 < 2;
       if (!isLt2M) {
         message.error("Dung lượng ảnh quá lớn vui lòng chọn ảnh dung lượng dưới 2MB");
       }
-      return isJpgOrPng && isLt2M;
+      return isLt2M;
+    };
+
+    const dummyRequest = async ({ file, onSuccess }: any) => {
+      upload(file, props.pathUpload, (url) => {
+        file.url = url;
+        file.filename = file.name;
+        onSuccess(url, file);
+      });
+    };
+
+    const handleChange = async (data: any) => {
+      emit("update:modelValue", data.fileList);
     };
 
     onMounted(() => {
-      if (props.defaultFileList) {
-        fileList.value = props.defaultFileList;
-      }
-    });
-
-    onUnmounted(() => {
-      fileList.value = [];
-      previewImage.value = "";
-      previewTitle.value = "";
-      context.emit("uploadImageSuccess", undefined);
-    });
-
-    watch(fileList, () => {
-      context.emit("uploadImageSuccess", Utils.formatFileList(fileList.value));
+      console.log(props.modelValue);
+      fileList.value = props.modelValue;
     });
 
     return {
@@ -94,7 +95,8 @@ export default defineComponent({
       previewImage,
       fileList,
       previewTitle,
-
+      handleChange,
+      dummyRequest,
       handleCancel,
       handlePreview,
       beforeUpload,

@@ -1,5 +1,5 @@
-import { Baservices } from "@/commons";
-import { ref } from "vue";
+import { Baservices, Constants } from "@/commons";
+import { computed, onMounted, ref } from "vue";
 import type { IAccount } from "@/commons/interface/User.interface";
 import Utils from "@/commons/Utils";
 import type { IBaseResponse } from "@/commons/Interfaces";
@@ -77,5 +77,28 @@ export function useResetPassword() {
   return {
     loadingResetPassword,
     resetPassword,
+  };
+}
+
+export function useUserInfo() {
+  const userInfo = ref<IAccount>();
+  const isAdminRole = computed((): boolean => {
+    if (userInfo.value) {
+      return userInfo.value?.role === Constants.ROLE.ADMIN;
+    }
+
+    return false;
+  });
+
+  onMounted(() => {
+    const user = localStorage.getItem("userInfo");
+    if (user) {
+      userInfo.value = JSON.parse(user);
+    }
+  });
+
+  return {
+    userInfo,
+    isAdminRole,
   };
 }

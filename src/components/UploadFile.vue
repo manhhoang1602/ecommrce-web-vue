@@ -1,10 +1,10 @@
 <template>
   <a-upload
     :before-upload="beforeUpload"
+    :custom-request="dummyRequest"
     :file-list="modelValue"
-    action="https://apidev.tpmart.winds.vn/api/v1/files/uploadFile/1"
+    :multiple="typeMedia === 'video' ? false : true"
     list-type="picture"
-    name="image"
     @change="handleChange"
     @preview="handlePreview"
   >
@@ -20,6 +20,7 @@ import { UploadOutlined } from "@ant-design/icons-vue";
 import { defineComponent, ref } from "vue";
 import type { UploadProps } from "ant-design-vue";
 import { message } from "ant-design-vue";
+import { upload } from "@/FireBaseConfig";
 
 function getBase64(file: File) {
   return new Promise((resolve, reject) => {
@@ -34,7 +35,7 @@ export default defineComponent({
   components: {
     UploadOutlined,
   },
-  props: ["modelValue"],
+  props: ["modelValue", "pathUpload", "typeMedia"],
   defineEmits: ["update:modelValue"],
   setup(props: any, { emit }: any) {
     const previewImage = ref("");
@@ -42,15 +43,25 @@ export default defineComponent({
     const previewTitle = ref("");
 
     const beforeUpload = (file: UploadProps["fileList"][number]) => {
-      const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
-      if (!isJpgOrPng) {
-        message.error("Định dạng ảnh phải là JPEG hoặc PNG");
+      if (props.typeMedia === "video") {
+        const isVideo = file.type.includes("video");
+        if (!isVideo) {
+          message.error("Không phải định dạng video");
+          return false;
+        }
+      } else {
+        const isImage = file.type.includes("image");
+        if (!isImage) {
+          message.error("Không phải định dạng ảnh");
+          return false;
+        }
+        const isLt2M = file.size / 1024 / 1024 < 2;
+        if (!isLt2M) {
+          message.error("Dung lượng ảnh quá lớn vui lòng chọn ảnh dung lượng dưới 2MB");
+        }
+
+        return isLt2M;
       }
-      const isLt2M = file.size / 1024 / 1024 < 2;
-      if (!isLt2M) {
-        message.error("Dung lượng ảnh quá lớn vui lòng chọn ảnh dung lượng dưới 2MB");
-      }
-      return isJpgOrPng && isLt2M;
     };
 
     const handlePreview = async (file: UploadProps["fileList"][number]) => {
@@ -62,13 +73,22 @@ export default defineComponent({
       previewTitle.value = file.name || file.url.substring(file.url.lastIndexOf("/") + 1);
     };
 
-    const handleChange = (data: any) => {
+    const handleChange = async (data: any) => {
       emit("update:modelValue", data.fileList);
+    };
+
+    const dummyRequest = async ({ file, onSuccess }: any) => {
+      upload(file, props.pathUpload, (url) => {
+        file.url = url;
+        file.filename = file.name;
+        onSuccess(url, file);
+      });
     };
     return {
       handleChange,
       beforeUpload,
       handlePreview,
+      dummyRequest,
     };
   },
 });

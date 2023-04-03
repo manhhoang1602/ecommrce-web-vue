@@ -10,6 +10,13 @@ body {
   overflow-x: hidden;
 }
 
+/*BOX*/
+.box-system{
+  padding: 8px;
+  border-radius: 3px;
+  background-color: white;
+}
+
 /*PAGE HEADER*/
 .ant-page-header {
   background-color: white !important;

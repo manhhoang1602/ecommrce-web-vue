@@ -30,7 +30,7 @@
                   label="Tên sản phẩm"
                   name="name"
                 >
-                  <a-input v-model:value="formState.name" />
+                  <a-textarea v-model:value="formState.name" :row="6" />
                 </a-form-item>
 
                 <a-form-item
@@ -60,6 +60,14 @@
                 >
                   <CategorySelect id="category-select" v-model="formState.categorySelected" />
                 </a-form-item>
+
+                <a-form-item v-if="type === 'update'" label="Trạng thái hàng" name="outOfStock">
+                  <OutOfStockSelect id="outOfStock" v-model="formState.outOfStock" :allowClear="false" />
+                </a-form-item>
+
+                <a-form-item v-if="type === 'update'" label="Trạng thái" name="status">
+                  <StatusSelect id="status" v-model="formState.status" :allowClear="false" />
+                </a-form-item>
               </a-col>
 
               <a-col :span="24">
@@ -86,6 +94,8 @@ import { Constants } from "@/commons";
 import ProductStatusSelect from "@/components/product/ProductStatusSelect.vue";
 import type { FormInstance } from "ant-design-vue";
 import type { IFormStateInfoProduct } from "@/commons/interface/Product.interface";
+import OutOfStockSelect from "@/components/product/OutOfStockSelect.vue";
+import StatusSelect from "@/components/StatusSelect.vue";
 
 export default {
   name: "FormInfo",
@@ -94,7 +104,7 @@ export default {
       return Constants;
     },
   },
-  components: { ProductStatusSelect, CategorySelect },
+  components: { StatusSelect, OutOfStockSelect, ProductStatusSelect, CategorySelect },
   emits: ["onValidateSuccess"],
   setup(props: any, { emit }: any) {
     const formRef = ref<FormInstance>();
@@ -105,6 +115,12 @@ export default {
       name: undefined,
       productStatus: undefined,
     });
+    const type = ref<"add" | "update">("add");
+
+    const loadForm = (formData: IFormStateInfoProduct) => {
+      formState.value = formData;
+      type.value = "update";
+    };
 
     const onSubmit = async (): Promise<boolean | IFormStateInfoProduct> => {
       const value = await formRef.value?.validateFields();
@@ -117,7 +133,9 @@ export default {
     return {
       formState,
       formRef,
+      type,
       onSubmit,
+      loadForm,
     };
   },
 };

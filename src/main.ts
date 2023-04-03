@@ -11,6 +11,8 @@ import "quill/dist/quill.snow.css";
 import "quill/dist/quill.bubble.css";
 import { QuillEditor } from "@vueup/vue-quill";
 
+import "./FireBaseConfig";
+
 const app = createApp(App);
 
 app.component("QuillEditor", QuillEditor);

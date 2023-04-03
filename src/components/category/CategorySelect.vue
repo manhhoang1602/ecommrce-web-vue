@@ -5,6 +5,7 @@
     :loading="loading"
     :options="data"
     :placeholder="placeholder"
+    :value="modelValue"
     show-search
     style="width: 100%"
     @change="handleChange"
@@ -19,7 +20,7 @@ import type { SelectProps } from "ant-design-vue";
 export default {
   name: "CategorySelect",
   emits: ["update:modelValue"],
-  props: ["placeholder"],
+  props: ["modelValue", "placeholder"],
   setup(props: any, { emit }: any) {
     const { loading, getListCategory } = useListCategory();
     const data = ref<SelectProps["options"]>([]);
@@ -43,7 +44,7 @@ export default {
             };
           }
           return {
-            value: JSON.stringify(value),
+            value: JSON.stringify({ parentId: value.id, childId: undefined }),
             label: value.name,
           };
         });

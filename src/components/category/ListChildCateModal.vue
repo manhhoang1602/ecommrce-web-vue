@@ -17,7 +17,7 @@
         <a-button type="primary" @click="onShowModalCU('add')">Thêm mới</a-button>
       </template>
 
-      <CUCategory ref="formRef" :parentCategoryId="payload.parentId" @onSubmitSuccess="loadTable" />
+      <CUCategory ref="formRef" :parentCategoryId="payload.parentId" @onSubmitSuccess="onCreateSuccess" />
     </a-page-header>
 
     <div class="search-box">
@@ -48,6 +48,7 @@
         :pagination="Utils.getConfigPagination(payload.page, total)"
         :scroll="{ x: 700 }"
         bordered
+        size="small"
         @change="handlePaginationChange"
       >
         <template #bodyCell="{ column, record }">
@@ -103,8 +104,8 @@ export interface IPayload extends IBasePayload {
 
 const columns: IColumn[] = [
   { title: "STT", dataIndex: "index", key: "index", width: 60, fixed: true },
-  { title: "Hình ảnh", dataIndex: "imageUrl", key: "imageUrl", fixed: true },
-  { title: "Tên danh mục", dataIndex: "name", key: "name" },
+  { title: "Hình ảnh", dataIndex: "imageUrl", key: "imageUrl", fixed: true, width: 200 },
+  { title: "Tên danh mục", dataIndex: "name", key: "name", width: 200, fixed: true },
   { title: "Trạng thái", dataIndex: "status", key: "status", width: 200 },
   { title: "Thứ tự hiển thị", dataIndex: "order", key: "order", width: 150 },
   { title: "Ngày tạo", dataIndex: "createdAt", key: "createdAt", width: 200 },
@@ -120,7 +121,8 @@ export default defineComponent({
       return Constants;
     },
   },
-  setup() {
+  emits: ["createChildCateSuccess"],
+  setup(props, context) {
     const formRef = ref();
     const dataTable = ref<IItemDataTableCategory[]>([]);
     const payload = reactive<IPayload>({
@@ -189,6 +191,11 @@ export default defineComponent({
       debouncedTextChange(e);
     };
 
+    const onCreateSuccess = () => {
+      loadTable();
+      context.emit("createChildCateSuccess");
+    };
+
     onMounted(() => {
       if (payload.parentId) {
         loadTable();
@@ -214,6 +221,7 @@ export default defineComponent({
       loadingStatus,
       visible,
       parentNameCate,
+      onCreateSuccess,
       showModal,
       closeModal,
       loadTable,

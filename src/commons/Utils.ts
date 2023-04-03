@@ -1,7 +1,5 @@
 import { Regex } from "@/commons/Regex";
 import { Constants } from "@/commons/Constants";
-import type { UploadProps } from "ant-design-vue";
-import type { IFile } from "@/commons/Interfaces";
 
 export default class Utils {
   public static checkPhoneNumber(phone: string): boolean {
@@ -20,23 +18,6 @@ export default class Utils {
     };
   }
 
-  public static formatFileList(listFile: UploadProps["fileList"] | any): IFile[] {
-    return listFile.map((file: any) => {
-      if (!file.response) {
-        return { ...file };
-      } else {
-        if (file.response) {
-          return {
-            uid: new Date().toDateString(),
-            name: file.response.data.filename,
-            status: "done",
-            url: file.response.data.url,
-          };
-        }
-      }
-    });
-  }
-
   public static getIdCategorySelectComponent(valueCategorySelected: string): {
     parentId: number;
     childId: number | undefined;
@@ -46,5 +27,9 @@ export default class Utils {
       parentId: value.parentId,
       childId: value.childId,
     };
+  }
+
+  public static formatNumber(value: number): string {
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
   }
 }

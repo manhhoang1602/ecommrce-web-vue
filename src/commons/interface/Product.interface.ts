@@ -12,8 +12,25 @@ export interface IResProduct {
   createdAt: string;
   updatedAt: string;
   categoryId: number;
-  product: any[];
+  discountPercent: number;
+  product: {
+    id: number;
+    price: number;
+    productId: number;
+    firstClassName: string;
+    isNotSale: number;
+    secondClassName: string;
+  }[];
   category: {
+    id: number;
+    name: string;
+    status: number;
+    imageUrl: string;
+    order: number;
+    createdAt: string;
+    updatedAt: string;
+  };
+  childCategory: {
     id: number;
     name: string;
     status: number;
@@ -26,6 +43,13 @@ export interface IResProduct {
     id: number;
     url: string;
     order: number;
+    type: number;
+    productId: number;
+  }[];
+  productClass: {
+    id: number;
+    type: number;
+    name: string;
     productId: number;
   }[];
 }
@@ -50,11 +74,12 @@ export interface IFormStateInfoProduct {
 
 export interface IReqProduct extends IFormStateInfoProduct {
   price?: number;
+  discountPercent?: number;
   productClass: {
     create: { type: number; name: string }[];
   };
   imageUrl: {
-    create: { url: string; order: number }[];
+    create: { url: string; order: number; type: number }[];
   };
   category: {
     connect: { id: number };
@@ -72,14 +97,16 @@ export interface IReqProduct extends IFormStateInfoProduct {
 export interface IFormStateSinglePrice {
   type: "single";
   productPrice: number | undefined;
+  discountPercent: number | undefined;
 }
 
 export interface IItemTablePrice {
   key: any;
   index: number;
-  firstClass: string;
-  secondClass: string;
+  firstClass?: string;
+  secondClass?: string;
   price: number;
+  salesPrice: number;
   status: 0 | 1;
 }
 
@@ -88,6 +115,7 @@ export interface IFormStateMultiPrice {
   dataFormFirst: IClass[];
   dataFormSecond: IClass[];
   dataTable: IItemTablePrice[];
+  discountPercent: number;
 }
 
 export interface IFormStateMedia {

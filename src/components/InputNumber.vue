@@ -1,6 +1,6 @@
 <script lang="ts">
 export default {
-  props: ["modelValue"],
+  props: ["modelValue", "disabled"],
   defineEmits: ["update:modelValue"],
   setup(props: any, { emit }: any) {
     const handleChange = (value: any) => {
@@ -15,7 +15,9 @@ export default {
 <template>
   <a-input-number
     :controls="false"
+    :disabled="disabled"
     :formatter="(value) => `đ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')"
+    :min="0"
     :style="{ width: '100%' }"
     :value="modelValue"
     @input="handleChange"

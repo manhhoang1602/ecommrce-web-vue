@@ -49,11 +49,12 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive, ref } from "vue";
-import { Baservices } from "@/commons";
+import { defineComponent, onMounted, reactive, ref } from "vue";
+import { Baservices, TOKEN_NAME } from "@/commons";
 import Notification from "@/components/notification/Notification";
 import Utils from "@/commons/Utils";
 import router from "@/router";
+import { PATH } from "@/config";
 
 interface FormState {
   phone: string;
@@ -88,7 +89,9 @@ export default defineComponent({
 
         if (response) {
           Notification.Success(undefined, "Đăng nhập thành công.");
-          router.push("/home");
+          localStorage.setItem(TOKEN_NAME, response.body.payload.data.user.token);
+          localStorage.setItem("userInfo", JSON.stringify(response.body.payload.data.user));
+          goToOrderPage();
         }
 
         loading.value = false;
@@ -98,9 +101,19 @@ export default defineComponent({
       }
     };
 
+    const goToOrderPage = () => {
+      router.push(PATH.ORDER.value);
+    };
+
     const onFinishFailed = (errorInfo: any) => {
       console.log("Failed:", errorInfo);
     };
+
+    onMounted(() => {
+      if (localStorage.getItem(TOKEN_NAME)) {
+        goToOrderPage();
+      }
+    });
 
     return {
       formState,

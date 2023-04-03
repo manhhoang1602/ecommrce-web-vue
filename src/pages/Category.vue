@@ -6,7 +6,7 @@
       </template>
 
       <CUCategory ref="formRef" @onSubmitSuccess="loadTable" />
-      <ListChildCateModal ref="listChildModalRef" />
+      <ListChildCateModal ref="listChildModalRef" @createChildCateSuccess="loadTable" />
     </a-page-header>
 
     <div class="search-box">
@@ -61,7 +61,8 @@
 
         <template #expandedRowRender="{ record }">
           <ListBtnAction
-            :loadingActive="loadingStatus"
+            :idActive="idRecordActive"
+            :loadingChangeStatus="loadingStatus"
             :loadingDelete="loadingDelete"
             :record="record"
             @onChangeStatus="onChangeStatusCategory"
@@ -95,8 +96,8 @@ export interface IPayload extends IBasePayload {
 
 const columns: IColumn[] = [
   { title: "STT", dataIndex: "index", key: "index", width: 60, fixed: true },
-  { title: "Hình ảnh", dataIndex: "imageUrl", key: "imageUrl", fixed: true },
-  { title: "Tên danh mục", dataIndex: "name", key: "name" },
+  { title: "Hình ảnh", dataIndex: "imageUrl", key: "imageUrl", fixed: true, width: 200 },
+  { title: "Tên danh mục", dataIndex: "name", key: "name", width: 200 },
   {
     title: "Danh mục con",
     dataIndex: "numberCateChild",
@@ -133,6 +134,7 @@ export default defineComponent({
     const { loading, total, getListCategory } = useListCategory();
     const { loadingDelete, deleteRecord } = useDelete();
     const { loadingStatus, changeStatus } = useChangeStatus();
+    const idRecordActive = ref<number>();
 
     const onShowModalCU = (type: "add" | "update", data?: IItemDataTableCategory) => {
       formRef.value?.onOpenModal(type, data);
@@ -161,11 +163,13 @@ export default defineComponent({
     };
 
     const onChangeStatusCategory = async (data: { id: number; status: 0 | 1 }) => {
+      idRecordActive.value = data.id;
       await changeStatus("/category/", data.id, data.status);
       loadTable();
     };
 
     const onDeleteCategory = async (id: number) => {
+      idRecordActive.value = id;
       await deleteRecord(`/category/${id}`, "Xóa danh mục thành công");
       loadTable();
     };
@@ -204,6 +208,7 @@ export default defineComponent({
       loadingDelete,
       loadingStatus,
       listChildModalRef,
+      idRecordActive,
       loadTable,
       onShowModalCU,
       onFilterTime,

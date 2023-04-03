@@ -21,6 +21,21 @@ const router = createRouter({
           component: () => import("../pages/Dashboard.vue"),
         },
         {
+          path: PATH.CUSTOMER.value,
+          name: PATH.CUSTOMER.name,
+          component: () => import("../pages/Customer.vue"),
+        },
+        {
+          path: PATH.ACCOUNT.value,
+          name: PATH.ACCOUNT.name,
+          component: () => import("../pages/Account.vue"),
+        },
+        {
+          path: PATH.REPORT.value,
+          name: PATH.REPORT.name,
+          component: () => import("../pages/Report.vue"),
+        },
+        {
           path: PATH.CATEGORY.value,
           name: PATH.CATEGORY.name,
           component: () => import("../pages/Category.vue"),
@@ -36,14 +51,25 @@ const router = createRouter({
           component: () => import("../pages/CUProduct.vue"),
         },
         {
-          path: PATH.CUSTOMER.value,
-          name: PATH.CUSTOMER.name,
-          component: () => import("../pages/Customer.vue"),
+          path: PATH.UPDATE_PRODUCT.value,
+          name: PATH.UPDATE_PRODUCT.name,
+          component: () => import("../pages/CUProduct.vue"),
         },
+        {
+          path: PATH.PRODUCT_DETAIL.value,
+          name: PATH.PRODUCT_DETAIL.name,
+          component: () => import("../pages/ProductDetail.vue"),
+        },
+
         {
           path: PATH.ORDER.value,
           name: PATH.ORDER.name,
           component: () => import("../pages/Order.vue"),
+        },
+        {
+          path: PATH.ORDER_DETAIL.value,
+          name: PATH.ORDER_DETAIL.name,
+          component: () => import("../pages/OrderDetail.vue"),
         },
         {
           path: PATH.NOTIFICATION.value,
@@ -51,14 +77,9 @@ const router = createRouter({
           component: () => import("../pages/Notification.vue"),
         },
         {
-          path: PATH.REPORT.value,
-          name: PATH.REPORT.name,
-          component: () => import("../pages/Report.vue"),
-        },
-        {
-          path: PATH.ACCOUNT.value,
-          name: PATH.ACCOUNT.name,
-          component: () => import("../pages/Account.vue"),
+          path: PATH.VOUCHER.value,
+          name: PATH.VOUCHER.name,
+          component: () => import("../pages/Voucher.vue"),
         },
       ],
     },

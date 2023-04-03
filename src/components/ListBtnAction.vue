@@ -3,7 +3,7 @@
     <template #actions>
       <a-button
         v-if="record.status === Constants.STATUS.INACTIVE"
-        :loading="loadingChangeStatus"
+        :loading="loadingChangeStatus && idActive === record.id"
         class="btn-status-active"
         type="text"
         @click="onChangeStatus(Constants.STATUS.ACTIVE)"
@@ -15,7 +15,7 @@
       </a-button>
       <a-button
         v-if="record.status === Constants.STATUS.ACTIVE"
-        :loading="loadingChangeStatus"
+        :loading="loadingChangeStatus && idActive === record.id"
         class="btn-status-inactive"
         type="text"
         @click="onChangeStatus(Constants.STATUS.INACTIVE)"
@@ -26,6 +26,19 @@
         Ngưng hoạt động
       </a-button>
 
+      <a-button
+        v-if="loadingResetPassword !== undefined"
+        :loading="loadingResetPassword && idActive === record.id"
+        class="btn-reset-pass"
+        type="text"
+        @click="onResetPassword"
+      >
+        <template #icon>
+          <i class="far fa-sync-alt"></i>
+        </template>
+        Reset mật khẩu
+      </a-button>
+
       <a-button class="btn-edit" type="text" @click="onEdit">
         <template #icon>
           <i class="fal fa-edit"></i>
@@ -33,12 +46,14 @@
         Chỉnh sửa
       </a-button>
 
-      <a-button :loading="loadingDelete" class="btn-delete" type="text" @click="onDelete">
-        <template #icon>
-          <i class="fal fa-trash-alt"></i>
-        </template>
-        Xóa
-      </a-button>
+      <a-popconfirm cancel-text="Hủy" ok-text="Xác nhận" title="Bạn có chắc muốn xóa?" @confirm="onDelete">
+        <a-button :loading="loadingDelete && idActive === record.id" class="btn-delete" type="text">
+          <template #icon>
+            <i class="fal fa-trash-alt"></i>
+          </template>
+          Xóa
+        </a-button>
+      </a-popconfirm>
     </template>
   </a-card>
 </template>
@@ -53,8 +68,8 @@ export default defineComponent({
       return Constants;
     },
   },
-  props: ["record", "loadingChangeStatus", "loadingDelete"],
-  emits: ["changeStatusSuccess", "deleteSuccess", "onChangeStatus", "onEdit", "onDelete"],
+  props: ["record", "loadingChangeStatus", "loadingDelete", "idActive", "loadingResetPassword"],
+  emits: ["changeStatusSuccess", "deleteSuccess", "onChangeStatus", "onEdit", "onDelete", "onResetPassword"],
   setup(props, context) {
     const onDelete = () => {
       context.emit("onDelete");
@@ -68,8 +83,13 @@ export default defineComponent({
       context.emit("onEdit");
     };
 
+    const onResetPassword = () => {
+      context.emit("onResetPassword");
+    };
+
     return {
       props,
+      onResetPassword,
       onDelete,
       onChangeStatus,
       onEdit,
@@ -139,6 +159,17 @@ export default defineComponent({
   .ant-card-actions {
     border: 1px solid rgba(128, 128, 128, 0.2);
     border-radius: 3px;
+  }
+
+  .btn-reset-pass {
+    span {
+      color: gray;
+    }
+
+    i {
+      color: gray;
+      margin-right: 4px;
+    }
   }
 }
 </style>

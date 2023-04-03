@@ -1,7 +1,14 @@
 <template>
   <a-page-header title="Sản Phẩm">
     <template #extra>
-      <a-button danger type="primary" @click="onDelete">Xóa</a-button>
+      <a-popconfirm
+        cancel-text="Hủy"
+        ok-text="Đồng ý"
+        title="Bạn có chắc muốn xóa sản phẩm này không?"
+        @confirm="onDelete"
+      >
+        <a-button :loading="loadingDelete" danger type="primary">Xóa</a-button>
+      </a-popconfirm>
       <a-button type="primary" @click="onExport">Export</a-button>
       <a-button type="primary">Sửa</a-button>
       <a-button type="primary" @click="onNavigateAddScreen">Thêm</a-button>
@@ -39,6 +46,15 @@
   <div class="table-box">
     <a-table
       :columns="columns"
+      :customRow="
+        (record) => {
+          return {
+            onDblclick: () => {
+              handleOnRowClick(record);
+            },
+          };
+        }
+      "
       :data-source="data"
       :loading="loading"
       :pagination="Utils.getConfigPagination(payload.page, total)"
@@ -56,7 +72,7 @@
 
         <template v-if="column.key === 'name'">
           <div style="font-family: OpenSans-Semibold; color: gray">
-            {{ record.code }}
+            {{ record.name }}
           </div>
         </template>
 
@@ -246,10 +262,10 @@ export default defineComponent({
       onChange: (_selectedRowKeys: string[]) => {
         selectedRowKeys.value = _selectedRowKeys;
       },
-      getCheckboxProps: (record: DataType) => ({
-        disabled: record.name === "Disabled User", // Column configuration not to be checked
-        name: record.name,
-      }),
+    };
+
+    const handleOnRowClick = (record: IItemTableProduct) => {
+      router.push(`/product/detail/${record.id}`);
     };
 
     onMounted(() => {
@@ -273,6 +289,7 @@ export default defineComponent({
       payload,
       rowSelection,
       loadingDelete,
+      handleOnRowClick,
       onNavigateAddScreen,
       onExport,
       onPaginationChange,

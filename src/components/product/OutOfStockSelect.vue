@@ -1,5 +1,11 @@
 <template>
-  <a-select :allow-clear="true" :placeholder="placeholder" style="width: 100%" @change="handleChange">
+  <a-select
+    :allow-clear="allowClear"
+    :placeholder="placeholder"
+    :value="modelValue"
+    style="width: 100%"
+    @change="handleChange"
+  >
     <a-select-option :value="Constants.OUT_OF_STOCK.AVAILABLE"> Còn hàng </a-select-option>
     <a-select-option :value="Constants.OUT_OF_STOCK.UNAVAILABLE"> Hết hàng </a-select-option>
   </a-select>
@@ -16,7 +22,7 @@ export default {
     },
   },
   emits: ["update:modelValue"],
-  props: ["placeholder"],
+  props: ["modelValue", "placeholder", "allowClear"],
   setup(props: any, { emit }: any) {
     const handleChange = (value: any) => {
       emit("update:modelValue", value);
