@@ -78,12 +78,12 @@
 <script lang="ts">
 import { Constants } from "@/commons";
 import { defineComponent, onMounted, reactive, ref, watch } from "vue";
-import type { IBasePayload, IColumn, IDataEventPagination, IItemDataTableCategory } from "@/commons/Interfaces";
+import type { IBasePayload, IColumn, IDataEventPagination, IItemDataTableCategory } from "@/commons/interface";
 import CUCategory from "@/components/category/CUCategory.vue";
-import StatusTag from "@/components/StatusTag.vue";
+import StatusTag from "@/components/base/StatusTag.vue";
 import { debounce } from "lodash";
 import dayjs from "dayjs";
-import ListBtnAction from "@/components/ListBtnAction.vue";
+import ListBtnAction from "@/components/base/ListBtnAction.vue";
 import { useChangeStatus, useListCategory } from "@/services";
 import { useDelete } from "@/services/UseDelete";
 import Utils from "@/commons/Utils";

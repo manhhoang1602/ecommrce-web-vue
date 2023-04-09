@@ -1,6 +1,7 @@
 import type { IClass } from "@/components/product/FormDynamicPrice.vue";
+import type { IResProductInOrder } from "./Order.interface";
 
-export interface IResProduct {
+interface IResProduct {
   id: number;
   name: string;
   code: string;
@@ -52,16 +53,17 @@ export interface IResProduct {
     name: string;
     productId: number;
   }[];
+  orderAndProduct: IResProductInOrder[];
 }
 
-export interface IItemTableProduct extends IResProduct {
+interface IItemTableProduct extends IResProduct {
   index: number;
   key: string | number;
   categoryName: string;
   image: string;
 }
 
-export interface IFormStateInfoProduct {
+interface IFormStateInfoProduct {
   code?: string;
   name?: string;
   productStatus?: number;
@@ -72,7 +74,7 @@ export interface IFormStateInfoProduct {
   outOfStock?: number;
 }
 
-export interface IReqProduct extends IFormStateInfoProduct {
+interface IReqProduct extends IFormStateInfoProduct {
   price?: number;
   discountPercent?: number;
   productClass: {
@@ -94,13 +96,13 @@ export interface IReqProduct extends IFormStateInfoProduct {
   };
 }
 
-export interface IFormStateSinglePrice {
+interface IFormStateSinglePrice {
   type: "single";
   productPrice: number | undefined;
   discountPercent: number | undefined;
 }
 
-export interface IItemTablePrice {
+interface IItemTablePrice {
   key: any;
   index: number;
   firstClass?: string;
@@ -110,7 +112,7 @@ export interface IItemTablePrice {
   status: 0 | 1;
 }
 
-export interface IFormStateMultiPrice {
+interface IFormStateMultiPrice {
   type: "multi";
   dataFormFirst: IClass[];
   dataFormSecond: IClass[];
@@ -118,7 +120,18 @@ export interface IFormStateMultiPrice {
   discountPercent: number;
 }
 
-export interface IFormStateMedia {
+interface IFormStateMedia {
   listImage: any;
   video: any;
 }
+
+export type {
+  IResProduct,
+  IItemTableProduct,
+  IFormStateInfoProduct,
+  IReqProduct,
+  IFormStateSinglePrice,
+  IItemTablePrice,
+  IFormStateMultiPrice,
+  IFormStateMedia,
+};

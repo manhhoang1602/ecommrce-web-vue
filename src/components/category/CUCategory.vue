@@ -59,7 +59,7 @@ import { computed, defineComponent, reactive, ref } from "vue";
 import useModal from "@/services/Modal";
 import { Constants } from "@/commons";
 import type { FormInstance } from "ant-design-vue";
-import UploadImage from "@/components/UploadImage.vue";
+import UploadImage from "@/components/base/UploadImage.vue";
 import { useCreate, useUpdate } from "@/services";
 import ParentCategorySelect from "@/components/category/ParentCategorySelect.vue";
 

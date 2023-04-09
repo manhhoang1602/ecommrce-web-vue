@@ -10,7 +10,7 @@ import type {
 import { Baservices, Constants } from "@/commons";
 import type { IPayloadProduct } from "@/pages/Product.vue";
 import Utils from "@/commons/Utils";
-import type { IFile } from "@/commons/Interfaces";
+import type { IFile } from "@/commons/interface";
 import type { IClass } from "@/components/product/FormDynamicPrice.vue";
 
 export function useLoadInfoForm(productDetail?: IResProduct): IFormStateInfoProduct {

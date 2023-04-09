@@ -47,7 +47,7 @@
     <a-table
       :columns="columns"
       :customRow="
-        (record) => {
+        (record: IItemTableProduct) => {
           return {
             onDblclick: () => {
               handleOnRowClick(record);
@@ -91,27 +91,46 @@
         <template v-if="column.key === 'outOfStock'">
           <OutOfStock :outOfStock="record.outOfStock" />
         </template>
+
+        <template v-if="column.key === 'totalSalesProduct'">
+          {{
+            usePricePerOrderByOrderStatus(
+              getOrderByProduct(record),
+              Constants.ORDER_STATUS.COMPLETE
+            ).totalProduct || "0"
+          }}
+        </template>
+
+        <template v-if="column.key === 'revenue'">
+          {{
+            usePricePerOrderByOrderStatus(
+              getOrderByProduct(record),
+              Constants.ORDER_STATUS.COMPLETE
+            ).totalPriceFormat || "0 đ"
+
+          }}
+        </template>
       </template>
     </a-table>
   </div>
 </template>
 
 <script lang="ts">
-import type { IBasePayload, IColumn, IDataEventPagination, IItemDataTableCategory } from "@/commons/Interfaces";
+import type { IBasePayload, IColumn, IDataEventPagination, IItemDataTableCategory, IResItemOrder, IResProductInOrder } from "@/commons/interface";
 import { defineComponent, onMounted, reactive, ref, watch } from "vue";
 import router from "@/router";
 import { Constants } from "@/commons";
-import { useDelete, useListProduct } from "@/services";
+import { useDelete, useListProduct, usePricePerOrderByOrderStatus } from "@/services";
 import ProductStatusTag from "@/components/product/ProductStatusTag.vue";
 import OutOfStock from "@/components/product/OutOfStock.vue";
 import type { IItemTableProduct } from "@/commons/interface/Product.interface";
-import StatusTag from "@/components/StatusTag.vue";
+import StatusTag from "@/components/base/StatusTag.vue";
 import CategorySelect from "@/components/category/CategorySelect.vue";
 import ProductStatusSelect from "@/components/product/ProductStatusSelect.vue";
 import OutOfStockSelect from "@/components/product/OutOfStockSelect.vue";
-import StatusSelect from "@/components/StatusSelect.vue";
+import StatusSelect from "@/components/base/StatusSelect.vue";
 import Notification from "@/components/notification/Notification";
-import InputSearch from "@/components/InputSearch.vue";
+import InputSearch from "@/components/base/InputSearch.vue";
 import Utils from "@/commons/Utils";
 import type { TableProps } from "ant-design-vue";
 
@@ -171,11 +190,12 @@ const columns: IColumn[] = [
     dataIndex: "status",
     width: 150,
   },
-  { title: "Đã bán", dataIndex: "", width: 150, key: "" },
-  { title: "Doanh số", dataIndex: "", width: 150, key: "" },
+  { title: "Đã bán", dataIndex: "totalSalesProduct", width: 150, key: "totalSalesProduct" },
+  { title: "Doanh số", dataIndex: "revenue", width: 150, key: "revenue" },
 ];
 
 export default defineComponent({
+  methods: { usePricePerOrderByOrderStatus },
   components: {
     InputSearch,
     StatusSelect,
@@ -268,6 +288,20 @@ export default defineComponent({
       router.push(`/product/detail/${record.id}`);
     };
 
+    const getOrderByProduct = (product: IItemTableProduct): IResItemOrder => {
+      const listProduct = product.orderAndProduct.reduce((result: any[], order: any) => {
+        if(order.order.orderStatus !== Constants.ORDER_STATUS.CANCEL) {
+          result.push({...order, orderStatus: order.order.orderStatus})
+          return result
+        }
+        return result
+      }, [])
+
+      return {
+        listProduct: listProduct,
+      } as any
+    }
+
     onMounted(() => {
       loadTable();
     });
@@ -289,6 +323,7 @@ export default defineComponent({
       payload,
       rowSelection,
       loadingDelete,
+      getOrderByProduct,
       handleOnRowClick,
       onNavigateAddScreen,
       onExport,

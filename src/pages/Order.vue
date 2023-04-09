@@ -124,13 +124,13 @@
 
 <script lang="ts">
 import OrderStatusSelect from "@/components/order/OrderStatusSelect.vue";
-import type { IColumn, IDataEventPagination, IItemDataTableOrder, IPayloadOrder } from "@/commons/Interfaces";
+import type { IColumn, IDataEventPagination, IItemDataTableOrder, IPayloadOrder } from "@/commons/interface";
 import Utils from "@/commons/Utils";
 import { onMounted, reactive, ref, watch } from "vue";
 import { Constants } from "@/commons";
 import { useListOrder, useUpdate } from "@/services";
 import dayjs from "dayjs";
-import InputSearch from "@/components/InputSearch.vue";
+import InputSearch from "@/components/base/InputSearch.vue";
 import OrderStatusTag from "@/components/order/OrderStausTag.vue";
 import Notification from "@/components/notification/Notification";
 import type { FormInstance, TableProps } from "ant-design-vue";

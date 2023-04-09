@@ -77,14 +77,14 @@ import type {
   IItemTableCustomer,
   IPayloadCustomers,
   IResCustomer,
-} from "@/commons/Interfaces";
+} from "@/commons/interface";
 import dayjs from "dayjs";
 import Utils from "@/commons/Utils";
 import ProvincesSelect from "@/components/customer/ProvincesSelect.vue";
-import { useInfoPricePerOrder, useListCustomer } from "@/services";
+import { useListCustomer, usePricePerOrderByOrderStatus } from "@/services";
 import moment from "moment";
 import Notification from "@/components/notification/Notification";
-import InputSearch from "@/components/InputSearch.vue";
+import InputSearch from "@/components/base/InputSearch.vue";
 
 const columns: IColumn[] = [
   { title: "STT", dataIndex: "index", key: "index", width: 60, fixed: true },
@@ -124,7 +124,7 @@ export default defineComponent({
     const dataTable = computed((): IItemTableCustomer[] => {
       const getSales = (customer: IResCustomer, type: "perOrderSuccess" | "perAllOrder"): number => {
         return customer.order.reduce((previousValue, currentValue) => {
-          const { totalPrice } = useInfoPricePerOrder(currentValue);
+          const { totalPrice } = usePricePerOrderByOrderStatus(currentValue);
 
           if (type === "perAllOrder") {
             return previousValue + totalPrice;

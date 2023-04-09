@@ -1,12 +1,12 @@
-import type { IBasePayload, IResItemVoucher } from "@/commons/Interfaces";
+import type { IBasePayload, IResItemVoucher } from "@/commons/interface/index";
 
-export interface IPayloadOrder extends IBasePayload {
+interface IPayloadOrder extends IBasePayload {
   orderStatus?: number;
   endDate?: string;
   startDate?: string;
 }
 
-export interface IResProductInOrder {
+interface IResProductInOrder {
   id: number;
   total: number;
   orderId: number;
@@ -29,9 +29,19 @@ export interface IResProductInOrder {
     childCategoryId: number;
   };
   product?: { price: number; firstClassName?: string; secondClassName?: string };
+  order: IResItemOrder;
 }
 
-export interface IResItemOrder {
+interface IResItemOrderHistory {
+  createdAt: string;
+  id: number;
+  orderId: number;
+  orderStatus: number;
+  updatedAt: string;
+  userId: number;
+}
+
+interface IResItemOrder {
   id: number;
   code: string;
   orderStatus: number;
@@ -49,9 +59,12 @@ export interface IResItemOrder {
     phone: number;
   };
   voucher: IResItemVoucher;
+  orderHistory: IResItemOrderHistory[];
 }
 
-export interface IItemDataTableOrder extends IResItemOrder {
+interface IItemDataTableOrder extends IResItemOrder {
   countProduct: number;
   totalPrice: number;
 }
+
+export type { IPayloadOrder, IResProductInOrder, IResItemOrder, IItemDataTableOrder };

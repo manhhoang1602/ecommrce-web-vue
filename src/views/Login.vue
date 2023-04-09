@@ -77,11 +77,15 @@ export default defineComponent({
 
         if (Utils.checkPhoneNumber(phone) === false) {
           Notification.Info(undefined, "Số điện thoại không hợp lệ.");
+          loading.value = false;
+
           return false;
         }
 
         if (password.length < 6) {
           Notification.Info(undefined, "Mật khẩu phải ít nhất 6 ký tự.");
+          loading.value = false;
+
           return false;
         }
 

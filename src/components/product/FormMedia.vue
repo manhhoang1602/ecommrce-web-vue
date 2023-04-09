@@ -44,7 +44,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, ref } from "vue";
-import UploadFile from "@/components/UploadFile.vue";
+import UploadFile from "@/components/base/UploadFile.vue";
 import type { FormInstance } from "ant-design-vue";
 import type { IFormStateMedia } from "@/commons/interface/Product.interface";
 

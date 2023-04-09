@@ -71,16 +71,16 @@
 <script lang="ts">
 import { defineComponent, onMounted, reactive, ref, watch } from "vue";
 import { Constants } from "@/commons";
-import type { IAccount, IBasePayload, IColumn, IDataEventPagination } from "@/commons/Interfaces";
+import type { IAccount, IBasePayload, IColumn, IDataEventPagination } from "@/commons/interface";
 import CUModalUser from "@/components/user/CUModalUser.vue";
 import { useChangeStatus, useListUser, useResetPassword } from "@/services";
-import StatusTag from "@/components/StatusTag.vue";
-import RoleTag from "@/components/RoleTag.vue";
+import StatusTag from "@/components/base/StatusTag.vue";
+import RoleTag from "@/components/base/RoleTag.vue";
 import { useDelete } from "@/services/UseDelete";
 import Utils from "@/commons/Utils";
-import InputSearch from "@/components/InputSearch.vue";
-import StatusSelect from "@/components/StatusSelect.vue";
-import ListBtnAction from "@/components/ListBtnAction.vue";
+import InputSearch from "@/components/base/InputSearch.vue";
+import StatusSelect from "@/components/base/StatusSelect.vue";
+import ListBtnAction from "@/components/base/ListBtnAction.vue";
 
 interface IPayload extends IBasePayload {
   role?: number;

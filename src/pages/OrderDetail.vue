@@ -94,12 +94,7 @@
         <a-col span="8">
           <a-card :bordered="false" :loading="loading" title="Lịch sử đặt hàng">
             <a-timeline>
-              <a-timeline-item color="green">Create a services site 2015-09-01</a-timeline-item>
-              <a-timeline-item color="green">Create a services site 2015-09-01</a-timeline-item>
-              <a-timeline-item color="red">
-                <p>Solve initial network problems 1</p>
-                <p>Solve initial network problems 2</p>
-              </a-timeline-item>
+              <TimeLineOrderHistory v-for="orderHistory in orderDetail?.orderHistory" :orderHistory="orderHistory" />
             </a-timeline>
           </a-card>
         </a-col>
@@ -174,13 +169,14 @@ import {
   useDataTablePriceOrderDetail,
   useDetailOrder,
   useDiscountVoucherPrice,
-  useInfoPricePerOrder,
+  usePricePerOrderByOrderStatus,
   useUpdate,
 } from "@/services";
 import useModal from "@/services/Modal";
 import router from "@/router";
 import type { IResItemOrder } from "@/commons/interface/Order.interface";
-import type { IColumn } from "@/commons/Interfaces";
+import type { IColumn } from "@/commons/interface";
+import TimeLineOrderHistory from "@/components/order/TimeLineOrderHistory.vue";
 
 const columns: IColumn[] = [
   { title: "STT", dataIndex: "index", key: "index", width: 60, fixed: true },
@@ -197,7 +193,7 @@ export default {
       return Utils;
     },
   },
-  components: { OrderStatusTag },
+  components: { TimeLineOrderHistory, OrderStatusTag },
   setup() {
     const formRef = ref<FormInstance>();
     let formState = reactive<{ reasonCancel: string }>({ reasonCancel: "" });
@@ -211,8 +207,8 @@ export default {
     const { showModal, closeModal, visible } = useModal();
     const { loading, getDetailOrder } = useDetailOrder();
 
-    const totalPrice = computed(() => useInfoPricePerOrder(orderDetail.value as IResItemOrder).totalPrice);
-    const totalProduct = computed(() => useInfoPricePerOrder(orderDetail.value as IResItemOrder).totalProduct);
+    const totalPrice = computed(() => usePricePerOrderByOrderStatus(orderDetail.value as IResItemOrder, undefined, true).totalPrice);
+    const totalProduct = computed(() => usePricePerOrderByOrderStatus(orderDetail.value as IResItemOrder).totalProduct);
 
     const dataTable = computed(() => useDataTablePriceOrderDetail(orderDetail.value));
 
@@ -467,6 +463,18 @@ export default {
       .value {
         font-family: OpenSans-Semibold;
         font-size: 13px;
+      }
+    }
+  }
+
+  .ant-timeline {
+    .time-line-order-history {
+      &:last-child {
+        .ant-timeline-item {
+          .ant-timeline-item-tail {
+            display: none;
+          }
+        }
       }
     }
   }

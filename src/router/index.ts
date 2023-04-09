@@ -81,6 +81,11 @@ const router = createRouter({
           name: PATH.VOUCHER.name,
           component: () => import("../pages/Voucher.vue"),
         },
+        {
+          path: PATH.SETTING.value,
+          name: PATH.SETTING.name,
+          component: () => import("../pages/Setting.vue"),
+        },
       ],
     },
   ],

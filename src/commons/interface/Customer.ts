@@ -1,6 +1,6 @@
-import type { IBasePayload, IResItemOrder } from "@/commons/Interfaces";
+import type { IBasePayload, IResItemOrder } from "@/commons/interface/index";
 
-export interface IResCustomer {
+interface IResCustomer {
   id: number;
   email: string;
   name: string;
@@ -12,15 +12,17 @@ export interface IResCustomer {
   order: IResItemOrder[];
 }
 
-export interface IPayloadCustomers extends IBasePayload {
+interface IPayloadCustomers extends IBasePayload {
   startDate?: string;
   endDate?: string;
   province?: string;
 }
 
-export interface IItemTableCustomer extends IResCustomer {
+interface IItemTableCustomer extends IResCustomer {
   index: number;
   key: number;
   salesPerOrder: number;
   salesPerOrderComplete: number;
 }
+
+export type { IResCustomer, IPayloadCustomers, IItemTableCustomer };

@@ -1,4 +1,4 @@
-export const Constants = {
+const Constants = {
   STATUS: {
     INACTIVE: 0,
     ACTIVE: 1,
@@ -46,3 +46,5 @@ export const Constants = {
     VIDEO: 1,
   },
 };
+
+export { Constants };

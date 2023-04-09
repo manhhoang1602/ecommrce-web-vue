@@ -9,3 +9,4 @@ export * from "./Product";
 export * from "./Order";
 export * from "./Customer";
 export * from "./Voucher";
+export * from "./Setting";

@@ -161,8 +161,8 @@
 import { computed, defineComponent, ref, watch } from "vue";
 import type { IClass } from "@/components/product/FormDynamicPrice.vue";
 import FormDynamicPrice from "@/components/product/FormDynamicPrice.vue";
-import type { IColumn, IFormStateMultiPrice, IFormStateSinglePrice, IItemTablePrice } from "@/commons/Interfaces";
-import InputNumber from "@/components/InputNumber.vue";
+import type { IColumn, IFormStateMultiPrice, IFormStateSinglePrice, IItemTablePrice } from "@/commons/interface";
+import InputNumber from "@/components/base/InputNumber.vue";
 import type { FormInstance } from "ant-design-vue";
 import { Constants } from "@/commons";
 import Utils from "../../commons/Utils";

@@ -1,6 +1,6 @@
 import type { IResItemOrder } from "@/commons/interface/Order.interface";
 
-export interface IResItemVoucher {
+interface IResItemVoucher {
   id: number;
   code: string;
   description: string;
@@ -13,7 +13,9 @@ export interface IResItemVoucher {
   Order: IResItemOrder[];
 }
 
-export interface IItemTableVoucher extends IResItemVoucher {
+interface IItemTableVoucher extends IResItemVoucher {
   index: number;
   key: number;
 }
+
+export type { IResItemVoucher, IItemTableVoucher };

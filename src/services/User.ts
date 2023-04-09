@@ -2,7 +2,7 @@ import { Baservices, Constants } from "@/commons";
 import { computed, onMounted, ref } from "vue";
 import type { IAccount } from "@/commons/interface/User.interface";
 import Utils from "@/commons/Utils";
-import type { IBaseResponse } from "@/commons/Interfaces";
+import type { IBaseResponse } from "@/commons/interface";
 import Notification from "@/components/notification/Notification";
 
 export function useListUser() {

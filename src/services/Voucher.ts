@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import type { IBaseResponse, IItemTableVoucher, IResItemVoucher } from "@/commons/Interfaces";
+import type { IBaseResponse, IItemTableVoucher, IResItemVoucher } from "@/commons/interface";
 import { Baservices } from "@/commons";
 import Utils from "@/commons/Utils";
 

@@ -1,4 +1,4 @@
-export interface IResCategory {
+interface IResCategory {
   id: number;
   imageUrl: string;
   name: string;
@@ -9,7 +9,9 @@ export interface IResCategory {
   mainProduct: any[];
 }
 
-export interface IItemDataTableCategory extends IResCategory {
+interface IItemDataTableCategory extends IResCategory {
   index: number;
   numberCateChild: number;
 }
+
+export type { IResCategory, IItemDataTableCategory };

@@ -1,4 +1,4 @@
-export interface IAccount {
+interface IAccount {
   id?: number;
   name: string;
   email: string;
@@ -7,3 +7,5 @@ export interface IAccount {
   status: 0 | 1;
   role: 0 | 1;
 }
+
+export type { IAccount };

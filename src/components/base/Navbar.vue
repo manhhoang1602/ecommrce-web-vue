@@ -24,6 +24,10 @@
       <i class="fad fa-user-tag" style="margin-right: 9px"></i>
       <span class="nav-text">Voucher</span>
     </a-menu-item>
+    <a-menu-item :key="PATH.SETTING.value">
+      <i class="fas fa-cogs" style="margin-right: 9px"></i>
+      <span class="nav-text">Setting</span>
+    </a-menu-item>
     <!--    <a-menu-item :key="PATH.NOTIFICATION.value">-->
     <!--      <i class="fas fa-bell ant-menu-item-icon"></i>-->
     <!--      <span class="nav-text">Thêm Thông báo</span>-->

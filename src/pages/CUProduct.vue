@@ -35,7 +35,7 @@ import Utils from "@/commons/Utils";
 import { useCreate, useDetailProduct, useLoadFormUpdateProduct, useUpdate } from "@/services";
 import router from "@/router";
 import { Constants } from "@/commons";
-import type { IFile } from "@/commons/Interfaces";
+import type { IFile } from "@/commons/interface";
 
 export default defineComponent({
   components: { FormMedia, FormInfo, FormPrice },

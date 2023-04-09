@@ -22,9 +22,9 @@
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
-import Navbar from "@/components/Navbar.vue";
+import Navbar from "@/components/base/Navbar.vue";
 import { useUserInfo } from "@/services";
-import Header from "@/components/Header.vue";
+import Header from "@/components/base/Header.vue";
 
 export default defineComponent({
   components: {

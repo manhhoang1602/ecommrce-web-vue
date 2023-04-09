@@ -1,5 +1,5 @@
 // ROUTER & MENU
-export const PATH = {
+const PATH = {
   LOGIN: { value: "/", name: "login" },
   HOME: { value: "/home", name: "home" },
   DASHBOARD: { value: "/dashboard", name: "dashboard" },
@@ -15,4 +15,7 @@ export const PATH = {
   ADD_PRODUCT: { value: "/product/add", name: "product/add" },
   UPDATE_PRODUCT: { value: "/product/update/:id", name: "product/update" },
   VOUCHER: { value: "/voucher", name: "voucher" },
+  SETTING: { value: "/setting", name: "setting" },
 };
+
+export { PATH };

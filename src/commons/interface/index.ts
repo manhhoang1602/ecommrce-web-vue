@@ -1,39 +1,7 @@
-export * from "./interface/User.interface";
-export * from "./interface/Category.interface";
-export * from "./interface/Product.interface";
-export * from "./interface/Order.interface";
-export * from "./interface/Customer";
-export * from "./interface/Voucher.interface";
-
-export interface IColumn {
-  title: string;
-  dataIndex: string;
-  key: string;
-  width?: number;
-  fixed?: boolean;
-}
-
-export interface IBasePayload {
-  page: number;
-  limit?: number;
-  search?: string;
-  status?: number;
-}
-
-export interface IBaseResponse<T> {
-  data: T;
-  page?: number;
-  limit?: number;
-  total?: number;
-}
-
-export interface IDataEventPagination {
-  current: number;
-}
-
-export interface IFile {
-  uid: string;
-  name: string;
-  status: "done" | "error" | "uploading";
-  url: string;
-}
+export * from "./User.interface";
+export * from "./Category.interface";
+export * from "./Product.interface";
+export * from "./Order.interface";
+export * from "./Customer";
+export * from "./Voucher.interface";
+export * from "./Base.interface";

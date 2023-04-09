@@ -77,11 +77,11 @@ import { defineComponent, reactive, ref } from "vue";
 import useModal from "@/services/Modal";
 import { Constants, Regex } from "@/commons";
 import type { FormInstance } from "ant-design-vue";
-import InputNumber from "@/components/InputNumber.vue";
+import InputNumber from "@/components/base/InputNumber.vue";
 import { useCreate, useUpdate } from "@/services";
-import UploadImage from "@/components/UploadImage.vue";
+import UploadImage from "@/components/base/UploadImage.vue";
 import type { IItemTableVoucher } from "@/commons/interface/Voucher.interface";
-import type { IFile } from "@/commons/Interfaces";
+import type { IFile } from "@/commons/interface";
 
 interface IFormState {
   id?: number;

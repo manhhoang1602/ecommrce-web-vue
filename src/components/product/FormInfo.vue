@@ -17,11 +17,7 @@
           >
             <a-row>
               <a-col :span="12">
-                <a-form-item
-                  :rules="[{ required: true, message: 'Vui lòng nhập mã sản phẩm' }]"
-                  label="Mã sản phẩm"
-                  name="code"
-                >
+                <a-form-item label="Mã sản phẩm" name="code">
                   <a-input v-model:value="formState.code" />
                 </a-form-item>
 
@@ -95,7 +91,7 @@ import ProductStatusSelect from "@/components/product/ProductStatusSelect.vue";
 import type { FormInstance } from "ant-design-vue";
 import type { IFormStateInfoProduct } from "@/commons/interface/Product.interface";
 import OutOfStockSelect from "@/components/product/OutOfStockSelect.vue";
-import StatusSelect from "@/components/StatusSelect.vue";
+import StatusSelect from "@/components/base/StatusSelect.vue";
 
 export default {
   name: "FormInfo",

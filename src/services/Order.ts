@@ -1,10 +1,10 @@
 import { ref } from "vue";
-import { Baservices } from "@/commons";
+import { Baservices, Constants } from "@/commons";
 import Utils from "@/commons/Utils";
 import moment from "moment";
 import type { IItemDataTableOrder, IPayloadOrder, IResItemOrder } from "@/commons/interface/Order.interface";
 
-export function useDataTablePriceOrderDetail(orderDetail?: IResItemOrder): any {
+function useDataTablePriceOrderDetail(orderDetail?: IResItemOrder): any {
   if (orderDetail) {
     return orderDetail.listProduct.map((value, index) => {
       const price: number = Number(value.mainProduct.price ? value.mainProduct.price : value.product?.price);
@@ -28,7 +28,11 @@ export function useDataTablePriceOrderDetail(orderDetail?: IResItemOrder): any {
   return [];
 }
 
-export function useInfoPricePerOrder(order?: IResItemOrder): {
+function usePricePerOrderByOrderStatus(
+  order?: IResItemOrder,
+  orderStatus?: number,
+  isGetCancelOrder?: boolean
+): {
   totalPrice: number;
   totalProduct: number;
   totalPriceFormat: string;
@@ -41,11 +45,31 @@ export function useInfoPricePerOrder(order?: IResItemOrder): {
         const salePrice = price - (price / 100) * currentValue.discountPercent;
         const totalPrice = totalProduct * salePrice;
 
-        return {
-          totalPrice: previousValue.totalPrice + totalPrice,
-          totalProduct: previousValue.totalProduct + totalProduct,
-          totalPriceFormat: Utils.formatNumber(previousValue.totalPrice + totalPrice) + " đ",
-        };
+        if (orderStatus !== undefined && orderStatus === order.orderStatus) {
+          return {
+            totalPrice: previousValue.totalPrice + totalPrice,
+            totalProduct: previousValue.totalProduct + totalProduct,
+            totalPriceFormat: Utils.formatNumber(previousValue.totalPrice + totalPrice) + " đ",
+          };
+        }
+
+        if (order.orderStatus !== Constants.ORDER_STATUS.CANCEL) {
+          return {
+            totalPrice: previousValue.totalPrice + totalPrice,
+            totalProduct: previousValue.totalProduct + totalProduct,
+            totalPriceFormat: Utils.formatNumber(previousValue.totalPrice + totalPrice) + " đ",
+          };
+        }
+
+        if (isGetCancelOrder) {
+          return {
+            totalPrice: previousValue.totalPrice + totalPrice,
+            totalProduct: previousValue.totalProduct + totalProduct,
+            totalPriceFormat: Utils.formatNumber(previousValue.totalPrice + totalPrice) + " đ",
+          };
+        }
+
+        return previousValue;
       },
       {
         totalPrice: -useDiscountVoucherPrice(order),
@@ -62,12 +86,12 @@ export function useInfoPricePerOrder(order?: IResItemOrder): {
   };
 }
 
-export function usePricePerOrder(order?: IResItemOrder): {
+function usePricePerOrder(order?: IResItemOrder): {
   totalPrice: number;
   totalProduct: number;
   totalPriceFormat: string;
 } {
-  if (order) {
+  if (order && order.orderStatus !== Constants.ORDER_STATUS.CANCEL) {
     return order.listProduct.reduce(
       (previousValue, currentValue) => {
         const price = Number(currentValue.mainProduct.price || currentValue.product?.price);
@@ -96,7 +120,7 @@ export function usePricePerOrder(order?: IResItemOrder): {
   };
 }
 
-export function useDiscountVoucherPrice(order?: IResItemOrder): number {
+function useDiscountVoucherPrice(order?: IResItemOrder): number {
   if (order) {
     if (!order.voucher) {
       return 0;
@@ -122,7 +146,7 @@ export function useDiscountVoucherPrice(order?: IResItemOrder): number {
   return 0;
 }
 
-export function useListOrder() {
+function useListOrder() {
   const loading = ref<boolean>(false);
   const total = ref<number>(0);
 
@@ -135,7 +159,7 @@ export function useListOrder() {
       loading.value = false;
 
       return res.body.payload.data.map((value: IResItemOrder, index: number) => {
-        const { totalPriceFormat, totalProduct } = useInfoPricePerOrder(value);
+        const { totalPriceFormat, totalProduct } = usePricePerOrderByOrderStatus(value, undefined, true);
         return {
           ...value,
           index: Utils.getIndex(payload.page, index),
@@ -159,7 +183,7 @@ export function useListOrder() {
   };
 }
 
-export function useDetailOrder() {
+function useDetailOrder() {
   const loading = ref<boolean>(false);
 
   const getDetailOrder = async (id: number): Promise<IResItemOrder | null> => {
@@ -182,3 +206,12 @@ export function useDetailOrder() {
     getDetailOrder,
   };
 }
+
+export {
+  useDataTablePriceOrderDetail,
+  usePricePerOrderByOrderStatus,
+  useDiscountVoucherPrice,
+  useListOrder,
+  usePricePerOrder,
+  useDetailOrder,
+};

@@ -40,7 +40,7 @@
             <span style="font-family: OpenSans-Semibold; color: #2148c0">{{ record.code }}</span>
           </template>
           <template v-if="column.key === 'total'">
-            <span>{{ Utils.formatNumber(record.total) }}</span>
+            <span>{{ record.total === null ? "Không giới hạn" : Utils.formatNumber(record.total || 0) }}</span>
           </template>
           <template v-if="column.key === 'minPriceApply'">
             <span>{{ Utils.formatNumber(record.minPriceApply) }} đ</span>
@@ -75,16 +75,16 @@
 <script lang="ts">
 import { defineComponent, onMounted, reactive, ref, watch } from "vue";
 import { Constants } from "@/commons";
-import type { IBasePayload, IColumn, IDataEventPagination, IResItemVoucher } from "@/commons/Interfaces";
+import type { IBasePayload, IColumn, IDataEventPagination, IResItemVoucher } from "@/commons/interface";
 import { useChangeStatus, useListVoucher } from "@/services";
-import StatusTag from "@/components/StatusTag.vue";
+import StatusTag from "@/components/base/StatusTag.vue";
 import { useDelete } from "@/services/UseDelete";
 import Utils from "@/commons/Utils";
-import InputSearch from "@/components/InputSearch.vue";
-import StatusSelect from "@/components/StatusSelect.vue";
+import InputSearch from "@/components/base/InputSearch.vue";
+import StatusSelect from "@/components/base/StatusSelect.vue";
 import CUVoucher from "@/components/voucher/CUVoucher.vue";
 import moment from "moment";
-import ListBtnAction from "@/components/ListBtnAction.vue";
+import ListBtnAction from "@/components/base/ListBtnAction.vue";
 
 interface IPayload extends IBasePayload {
   role?: number;

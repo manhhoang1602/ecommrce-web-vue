@@ -152,10 +152,10 @@
 <script lang="ts">
 import { computed, onMounted, ref } from "vue";
 import Utils from "@/commons/Utils";
-import type { IColumn } from "@/commons/Interfaces";
+import type { IColumn } from "@/commons/interface";
 import { useDelete, useDetailProduct, useUpdate } from "@/services";
 import router from "@/router";
-import StatusTag from "@/components/StatusTag.vue";
+import StatusTag from "@/components/base/StatusTag.vue";
 import OutOfStock from "@/components/product/OutOfStock.vue";
 import ProductStatusTag from "@/components/product/ProductStatusTag.vue";
 import { Constants } from "@/commons";

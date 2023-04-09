@@ -2,7 +2,7 @@ import Axios from "axios";
 import humps from "humps";
 import Notification from "@/components/notification/Notification";
 
-export interface IApiResponse<T> {
+interface IApiResponse<T> {
   status: number;
   body: T;
 }
@@ -13,13 +13,13 @@ const DEFINE_CODE_ERROR = {
 };
 
 /*CONFIG SERVICE*/
-export const TOKEN_NAME: string = "token";
-export const BASE_URL: string = "http://localhost:3000";
+const TOKEN_NAME: string = "token";
+const BASE_URL: string = "http://localhost:3000";
 
-export const getToken = (): string | null => localStorage.getItem(TOKEN_NAME);
+const getToken = (): string | null => localStorage.getItem(TOKEN_NAME);
 
 /*METHODS CALL API*/
-export const apiCall = async (
+const apiCall = async (
   url: string,
   method: "GET" | "PUT" | "POST" | "DELETE",
   data: { [key: string]: any } | undefined,
@@ -85,7 +85,7 @@ export const apiCall = async (
   });
 };
 
-export class Baservices {
+class Baservices {
   public static async getMethod(
     _url: string,
     _payload?: any,
@@ -123,3 +123,6 @@ export class Baservices {
     return apiCall(_url, "DELETE", _data, _isToken, _token);
   }
 }
+
+export type { IApiResponse };
+export { TOKEN_NAME, BASE_URL, getToken, Baservices };

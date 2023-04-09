@@ -18,7 +18,6 @@ import { onMounted, ref } from "vue";
 import type { SelectProps } from "ant-design-vue";
 
 export default {
-  name: "CategorySelect",
   emits: ["update:modelValue"],
   props: ["modelValue", "placeholder"],
   setup(props: any, { emit }: any) {
@@ -72,5 +71,3 @@ export default {
   },
 };
 </script>
-
-<style scoped></style>
