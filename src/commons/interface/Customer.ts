@@ -1,15 +1,21 @@
-import type { IBasePayload, IResItemOrder } from "@/commons/interface/index";
+import type { IBasePayload, IResOrder } from "@/commons/interface/index";
+import type { EDelete, ERole, EStatus } from "@/commons/enums";
 
-interface IResCustomer {
+interface IResUser {
   id: number;
-  email: string;
-  name: string;
+  email?: string;
+  name?: string;
   phone: string;
-  role: number;
+  password?: string;
+  province?: string;
+  district?: string;
+  ward?: string;
+  isDelete: EDelete;
+  role: ERole;
   createdAt: string;
-  status: number;
+  status: EStatus;
   updatedAt: string;
-  order: IResItemOrder[];
+  order: IResOrder[];
 }
 
 interface IPayloadCustomers extends IBasePayload {
@@ -18,11 +24,11 @@ interface IPayloadCustomers extends IBasePayload {
   province?: string;
 }
 
-interface IItemTableCustomer extends IResCustomer {
+interface IItemTableCustomer extends IResUser {
   index: number;
   key: number;
   salesPerOrder: number;
   salesPerOrderComplete: number;
 }
 
-export type { IResCustomer, IPayloadCustomers, IItemTableCustomer };
+export type { IResUser, IPayloadCustomers, IItemTableCustomer };

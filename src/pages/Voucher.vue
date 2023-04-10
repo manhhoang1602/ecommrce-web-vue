@@ -75,7 +75,7 @@
 <script lang="ts">
 import { defineComponent, onMounted, reactive, ref, watch } from "vue";
 import { Constants } from "@/commons";
-import type { IBasePayload, IColumn, IDataEventPagination, IResItemVoucher } from "@/commons/interface";
+import type { IBasePayload, IColumn, IDataEventPagination, IResVoucher } from "@/commons/interface";
 import { useChangeStatus, useListVoucher } from "@/services";
 import StatusTag from "@/components/base/StatusTag.vue";
 import { useDelete } from "@/services/UseDelete";
@@ -114,9 +114,9 @@ export default defineComponent({
   components: { ListBtnAction, CUVoucher, StatusSelect, InputSearch, StatusTag },
   setup() {
     const popupRef = ref<{
-      onOpenModal: (type: "add" | "update", data?: IResItemVoucher) => any;
+      onOpenModal: (type: "add" | "update", data?: IResVoucher) => any;
     }>();
-    const dataTable = ref<IResItemVoucher[]>([]);
+    const dataTable = ref<IResVoucher[]>([]);
     const payload = reactive<IPayload>({
       page: Constants.PAYLOAD.PAGE,
       limit: Constants.PAYLOAD.LIMIT,
@@ -128,7 +128,7 @@ export default defineComponent({
     const { loadingDelete, deleteRecord } = useDelete();
     const { loading, total, getListVoucher } = useListVoucher();
     const idRecordActive = ref<number>();
-    const openCUModalVoucher = (type: "add" | "update", data?: IResItemVoucher) => {
+    const openCUModalVoucher = (type: "add" | "update", data?: IResVoucher) => {
       popupRef.value?.onOpenModal(type, data);
     };
 
@@ -151,7 +151,7 @@ export default defineComponent({
       await loadDataTable();
     };
 
-    const onUpdateVoucher = (data: IResItemVoucher) => {
+    const onUpdateVoucher = (data: IResVoucher) => {
       openCUModalVoucher("update", data);
     };
 

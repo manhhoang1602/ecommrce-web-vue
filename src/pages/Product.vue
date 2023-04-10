@@ -94,20 +94,15 @@
 
         <template v-if="column.key === 'totalSalesProduct'">
           {{
-            usePricePerOrderByOrderStatus(
-              getOrderByProduct(record),
-              Constants.ORDER_STATUS.COMPLETE
-            ).totalProduct || "0"
+            usePricePerOrderByOrderStatus(getOrderByProduct(record), Constants.ORDER_STATUS.COMPLETE).totalProduct ||
+            "0"
           }}
         </template>
 
         <template v-if="column.key === 'revenue'">
           {{
-            usePricePerOrderByOrderStatus(
-              getOrderByProduct(record),
-              Constants.ORDER_STATUS.COMPLETE
-            ).totalPriceFormat || "0 đ"
-
+            usePricePerOrderByOrderStatus(getOrderByProduct(record), Constants.ORDER_STATUS.COMPLETE)
+              .totalPriceFormat || "0 đ"
           }}
         </template>
       </template>
@@ -116,7 +111,7 @@
 </template>
 
 <script lang="ts">
-import type { IBasePayload, IColumn, IDataEventPagination, IItemDataTableCategory, IResItemOrder, IResProductInOrder } from "@/commons/interface";
+import type { IBasePayload, IColumn, IDataEventPagination, IItemTableCategory, IResOrder } from "@/commons/interface";
 import { defineComponent, onMounted, reactive, ref, watch } from "vue";
 import router from "@/router";
 import { Constants } from "@/commons";
@@ -258,7 +253,7 @@ export default defineComponent({
       payload.page = data.current;
     };
 
-    const onSelectChange = (data: IItemDataTableCategory) => {};
+    const onSelectChange = (data: IItemTableCategory) => {};
 
     const onExport = () => {
       Notification.Info(undefined, "Chức năng này đang phát triển sẽ hoàn thiện trong thời gian tới");
@@ -288,19 +283,19 @@ export default defineComponent({
       router.push(`/product/detail/${record.id}`);
     };
 
-    const getOrderByProduct = (product: IItemTableProduct): IResItemOrder => {
+    const getOrderByProduct = (product: IItemTableProduct): IResOrder => {
       const listProduct = product.orderAndProduct.reduce((result: any[], order: any) => {
-        if(order.order.orderStatus !== Constants.ORDER_STATUS.CANCEL) {
-          result.push({...order, orderStatus: order.order.orderStatus})
-          return result
+        if (order.order.orderStatus !== Constants.ORDER_STATUS.CANCEL) {
+          result.push({ ...order, orderStatus: order.order.orderStatus });
+          return result;
         }
-        return result
-      }, [])
+        return result;
+      }, []);
 
       return {
         listProduct: listProduct,
-      } as any
-    }
+      } as any;
+    };
 
     onMounted(() => {
       loadTable();

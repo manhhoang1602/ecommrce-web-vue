@@ -85,7 +85,7 @@
 <script lang="ts">
 import { Constants } from "@/commons";
 import { defineComponent, onMounted, reactive, ref, watch } from "vue";
-import type { IBasePayload, IColumn, IDataEventPagination, IItemDataTableCategory } from "@/commons/interface";
+import type { IBasePayload, IColumn, IDataEventPagination, IItemTableCategory } from "@/commons/interface";
 import CUCategory from "@/components/category/CUCategory.vue";
 import StatusTag from "@/components/base/StatusTag.vue";
 import { debounce } from "lodash";
@@ -124,7 +124,7 @@ export default defineComponent({
   emits: ["createChildCateSuccess"],
   setup(props, context) {
     const formRef = ref();
-    const dataTable = ref<IItemDataTableCategory[]>([]);
+    const dataTable = ref<IItemTableCategory[]>([]);
     const payload = reactive<IPayload>({
       search: undefined,
       page: Constants.PAYLOAD.PAGE,
@@ -147,7 +147,7 @@ export default defineComponent({
       showModal();
     };
 
-    const onShowModalCU = (type: "add" | "update", data?: IItemDataTableCategory) => {
+    const onShowModalCU = (type: "add" | "update", data?: IItemTableCategory) => {
       formRef.value?.onOpenModal(type, data);
     };
 

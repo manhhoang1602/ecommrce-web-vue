@@ -1,62 +1,74 @@
 import type { IClass } from "@/components/product/FormDynamicPrice.vue";
-import type { IResProductInOrder } from "./Order.interface";
+import type { IResOrderAndProduct } from "./Order.interface";
+import type {
+  EDelete,
+  EOutOfStock,
+  EProductClassType,
+  EProductMediaType,
+  EProductStatus,
+  ESale,
+  EStatus,
+} from "@/commons/enums";
+import type { IResCategory } from "@/commons/interface/Category.interface";
 
 interface IResProduct {
   id: number;
-  name: string;
-  code: string;
   price: number;
-  description: string;
-  status: number;
-  productStatus: number;
-  outOfStock: number;
+  productId: number;
+  firstClassName?: string;
+  secondClassName?: string;
+  isNotSale: ESale;
+  orderAndProduct: IResOrderAndProduct[];
+  product: IResMainProduct;
   createdAt: string;
   updatedAt: string;
-  categoryId: number;
-  discountPercent: number;
-  product: {
-    id: number;
-    price: number;
-    productId: number;
-    firstClassName: string;
-    isNotSale: number;
-    secondClassName: string;
-  }[];
-  category: {
-    id: number;
-    name: string;
-    status: number;
-    imageUrl: string;
-    order: number;
-    createdAt: string;
-    updatedAt: string;
-  };
-  childCategory: {
-    id: number;
-    name: string;
-    status: number;
-    imageUrl: string;
-    order: number;
-    createdAt: string;
-    updatedAt: string;
-  };
-  imageUrl: {
-    id: number;
-    url: string;
-    order: number;
-    type: number;
-    productId: number;
-  }[];
-  productClass: {
-    id: number;
-    type: number;
-    name: string;
-    productId: number;
-  }[];
-  orderAndProduct: IResProductInOrder[];
 }
 
-interface IItemTableProduct extends IResProduct {
+interface IResProductClass {
+  id: number;
+  type: EProductClassType;
+  name: string;
+  productId: number;
+  product: IResMainProduct;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface IResProductImage {
+  id: number;
+  url: string;
+  type: EProductMediaType;
+  order: number;
+  productId: number;
+  product: IResMainProduct;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface IResMainProduct {
+  id: number;
+  name: string;
+  description: string;
+  status: EStatus;
+  createdAt: string;
+  code: string;
+  updatedAt: string;
+  categoryId: number;
+  outOfStock: EOutOfStock;
+  productStatus: EProductStatus;
+  price: number;
+  isDelete: EDelete;
+  childCategoryId?: number;
+  discountPercent: number;
+  category: IResCategory;
+  childCategory?: IResCategory;
+  orderAndProduct: IResOrderAndProduct;
+  product: IResProduct[];
+  imageUrl: IResProductImage[];
+  productClass: IResProductClass[];
+}
+
+interface IItemTableProduct extends IResMainProduct {
   index: number;
   key: string | number;
   categoryName: string;
@@ -126,7 +138,7 @@ interface IFormStateMedia {
 }
 
 export type {
-  IResProduct,
+  IResMainProduct,
   IItemTableProduct,
   IFormStateInfoProduct,
   IReqProduct,
@@ -134,4 +146,5 @@ export type {
   IItemTablePrice,
   IFormStateMultiPrice,
   IFormStateMedia,
+  IResProduct,
 };

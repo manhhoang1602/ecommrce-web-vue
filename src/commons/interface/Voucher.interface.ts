@@ -1,6 +1,7 @@
-import type { IResItemOrder } from "@/commons/interface/Order.interface";
+import type { IResOrder } from "@/commons/interface/Order.interface";
+import type { EStatus } from "@/commons/enums";
 
-interface IResItemVoucher {
+interface IResVoucher {
   id: number;
   code: string;
   description: string;
@@ -8,14 +9,14 @@ interface IResItemVoucher {
   value: number;
   maxValue: number;
   total: number;
-  status: number;
+  status: EStatus;
   imageUrl: string;
-  Order: IResItemOrder[];
+  Order: IResOrder[];
 }
 
-interface IItemTableVoucher extends IResItemVoucher {
+interface IItemTableVoucher extends IResVoucher {
   index: number;
   key: number;
 }
 
-export type { IResItemVoucher, IItemTableVoucher };
+export type { IResVoucher, IItemTableVoucher };

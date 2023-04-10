@@ -166,15 +166,15 @@ import { computed, onMounted, reactive, ref } from "vue";
 import { Constants } from "@/commons";
 import type { FormInstance } from "ant-design-vue";
 import {
-  useDataTablePriceOrderDetail,
   useDetailOrder,
   useDiscountVoucherPrice,
   usePricePerOrderByOrderStatus,
+  useTableProductOrderDetailData,
   useUpdate,
 } from "@/services";
 import useModal from "@/services/Modal";
 import router from "@/router";
-import type { IResItemOrder } from "@/commons/interface/Order.interface";
+import type { IResOrder } from "@/commons/interface/Order.interface";
 import type { IColumn } from "@/commons/interface";
 import TimeLineOrderHistory from "@/components/order/TimeLineOrderHistory.vue";
 
@@ -202,15 +202,17 @@ export default {
       return [Number(id)];
     };
 
-    const orderDetail = ref<IResItemOrder>();
+    const orderDetail = ref<IResOrder>();
 
     const { showModal, closeModal, visible } = useModal();
     const { loading, getDetailOrder } = useDetailOrder();
 
-    const totalPrice = computed(() => usePricePerOrderByOrderStatus(orderDetail.value as IResItemOrder, undefined, true).totalPrice);
-    const totalProduct = computed(() => usePricePerOrderByOrderStatus(orderDetail.value as IResItemOrder).totalProduct);
+    const totalPrice = computed(
+      () => usePricePerOrderByOrderStatus(orderDetail.value as IResOrder, undefined, true).totalPrice
+    );
+    const totalProduct = computed(() => usePricePerOrderByOrderStatus(orderDetail.value as IResOrder).totalProduct);
 
-    const dataTable = computed(() => useDataTablePriceOrderDetail(orderDetail.value));
+    const dataTable = computed(() => useTableProductOrderDetailData(orderDetail.value));
 
     const onShowModal = () => {
       formRef.value?.resetFields();

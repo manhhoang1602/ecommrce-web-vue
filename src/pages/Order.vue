@@ -124,7 +124,7 @@
 
 <script lang="ts">
 import OrderStatusSelect from "@/components/order/OrderStatusSelect.vue";
-import type { IColumn, IDataEventPagination, IItemDataTableOrder, IPayloadOrder } from "@/commons/interface";
+import type { IColumn, IDataEventPagination, IItemTableOrder, IPayloadOrder } from "@/commons/interface";
 import Utils from "@/commons/Utils";
 import { onMounted, reactive, ref, watch } from "vue";
 import { Constants } from "@/commons";
@@ -166,7 +166,7 @@ export default {
   },
   components: { OrderStatusTag, InputSearch, OrderStatusSelect },
   setup() {
-    const dataTable = ref<IItemDataTableOrder[]>([]);
+    const dataTable = ref<IItemTableOrder[]>([]);
     const payload = reactive<IPayloadOrder>({
       search: undefined,
       page: Constants.PAYLOAD.PAGE,
@@ -174,7 +174,7 @@ export default {
       startDate: undefined,
       orderStatus: undefined,
     });
-    const selectedRows = ref<IItemDataTableOrder[]>([]);
+    const selectedRows = ref<IItemTableOrder[]>([]);
     const formRef = ref<FormInstance>();
     let formState = reactive<{ reasonCancel: string }>({ reasonCancel: "" });
 
@@ -203,7 +203,7 @@ export default {
     };
 
     const rowSelection: TableProps["rowSelection"] = {
-      onChange: (_selectedRowKeys: string[], _selectedRows: IItemDataTableOrder[]) => {
+      onChange: (_selectedRowKeys: string[], _selectedRows: IItemTableOrder[]) => {
         selectedRows.value = _selectedRows as any;
       },
     };
@@ -432,7 +432,7 @@ export default {
       }
     };
 
-    const handleOnRowClick = (record: IItemDataTableOrder) => {
+    const handleOnRowClick = (record: IItemTableOrder) => {
       router.push(`/order/detail/${record.id}`);
     };
 

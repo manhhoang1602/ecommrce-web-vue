@@ -1,4 +1,5 @@
-import type { IBasePayload, IResItemVoucher } from "@/commons/interface/index";
+import type { IBasePayload, IResMainProduct, IResProduct, IResUser, IResVoucher } from "@/commons/interface/index";
+import type { EOrderStatus } from "@/commons/enums";
 
 interface IPayloadOrder extends IBasePayload {
   orderStatus?: number;
@@ -6,65 +7,53 @@ interface IPayloadOrder extends IBasePayload {
   startDate?: string;
 }
 
-interface IResProductInOrder {
+interface IResOrderAndProduct {
   id: number;
   total: number;
+  discountPercent: number;
   orderId: number;
   mainProductId: number;
-  discountPercent: number;
-  productId: number;
-  mainProduct: {
-    id: number;
-    name: string;
-    description: string | null;
-    status: number;
-    createdAt: string;
-    code: string;
-    updatedAt: string;
-    discountPercent: number;
-    categoryId: number;
-    outOfStock: number;
-    productStatus: number;
-    price: number;
-    childCategoryId: number;
-  };
-  product?: { price: number; firstClassName?: string; secondClassName?: string };
-  order: IResItemOrder;
+  productId?: number;
+  mainProduct: IResMainProduct;
+  order: IResOrder;
+  product?: IResProduct;
+  createdAt: string;
+  updatedAt: string;
 }
 
-interface IResItemOrderHistory {
-  createdAt: string;
+interface IResOrderHistory {
   id: number;
-  orderId: number;
-  orderStatus: number;
+  createdAt: string;
   updatedAt: string;
   userId: number;
+  orderId: number;
+  orderStatus: EOrderStatus;
+  order: IResOrder;
+  user: IResUser;
 }
 
-interface IResItemOrder {
+interface IResOrder {
   id: number;
   code: string;
-  orderStatus: number;
+  orderStatus: EOrderStatus;
   reasonCancel: string | null;
   receiver: string | null;
   receivePhone: string | null;
   userId: number;
-  receiveAddress: string;
-  createdAt: string;
   shipPrice: number;
+  receiveAddress: string;
+  user: IResUser;
+  listProduct: IResOrderAndProduct[];
+  orderHistory: IResOrderHistory[];
+  createdAt: string;
   updatedAt: string;
-  listProduct: IResProductInOrder[];
-  user: {
-    name: string;
-    phone: number;
-  };
-  voucher: IResItemVoucher;
-  orderHistory: IResItemOrderHistory[];
+  voucher?: IResVoucher;
+  voucherId?: number;
 }
 
-interface IItemDataTableOrder extends IResItemOrder {
+interface IItemTableOrder extends IResOrder {
   countProduct: number;
   totalPrice: number;
 }
 
-export type { IPayloadOrder, IResProductInOrder, IResItemOrder, IItemDataTableOrder };
+export type { IPayloadOrder, IResOrderAndProduct, IResOrder, IItemTableOrder };

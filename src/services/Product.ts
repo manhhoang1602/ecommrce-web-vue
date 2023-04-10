@@ -5,7 +5,7 @@ import type {
   IFormStateMultiPrice,
   IFormStateSinglePrice,
   IItemTableProduct,
-  IResProduct,
+  IResMainProduct,
 } from "@/commons/interface/Product.interface";
 import { Baservices, Constants } from "@/commons";
 import type { IPayloadProduct } from "@/pages/Product.vue";
@@ -13,7 +13,7 @@ import Utils from "@/commons/Utils";
 import type { IFile } from "@/commons/interface";
 import type { IClass } from "@/components/product/FormDynamicPrice.vue";
 
-export function useLoadInfoForm(productDetail?: IResProduct): IFormStateInfoProduct {
+export function useLoadInfoForm(productDetail?: IResMainProduct): IFormStateInfoProduct {
   const categorySelected = productDetail?.childCategory
     ? { parentId: productDetail?.categoryId, childId: productDetail.childCategory.id }
     : { parentId: productDetail?.categoryId };
@@ -29,7 +29,7 @@ export function useLoadInfoForm(productDetail?: IResProduct): IFormStateInfoProd
   };
 }
 
-export function useLoadMediaForm(productDetail?: IResProduct): IFormStateMedia {
+export function useLoadMediaForm(productDetail?: IResMainProduct): IFormStateMedia {
   const listImage: IFile[] = [];
   const video: IFile[] = [];
 
@@ -61,7 +61,7 @@ export function useLoadMediaForm(productDetail?: IResProduct): IFormStateMedia {
   };
 }
 
-export function useLoadPriceForm(productDetail?: IResProduct): IFormStateMultiPrice | IFormStateSinglePrice {
+export function useLoadPriceForm(productDetail?: IResMainProduct): IFormStateMultiPrice | IFormStateSinglePrice {
   if (productDetail) {
     const firstClassName: IClass[] = [];
     productDetail.productClass.forEach((value) => {
@@ -141,7 +141,7 @@ export function useLoadPriceForm(productDetail?: IResProduct): IFormStateMultiPr
   };
 }
 
-export function useLoadFormUpdateProduct(productDetail?: IResProduct): {
+export function useLoadFormUpdateProduct(productDetail?: IResMainProduct): {
   formInfoState: IFormStateInfoProduct;
   formMediaState: IFormStateMedia;
   formPriceState: IFormStateMultiPrice | IFormStateSinglePrice;
@@ -163,7 +163,7 @@ export function useListProduct() {
       loading.value = true;
       const res = await Baservices.getMethod(`/product/list-product`, payload);
 
-      const listProduct = res.body.payload.data.map((resProduct: IResProduct, index: number) => {
+      const listProduct = res.body.payload.data.map((resProduct: IResMainProduct, index: number) => {
         return {
           ...resProduct,
           key: resProduct.id,
@@ -195,9 +195,9 @@ export function useListProduct() {
 
 export function useDetailProduct() {
   const loading = ref<boolean>(false);
-  const detailProduct = ref<IResProduct>();
+  const detailProduct = ref<IResMainProduct>();
 
-  const getDetailProduct = async (id: number): Promise<IResProduct> => {
+  const getDetailProduct = async (id: number): Promise<IResMainProduct> => {
     try {
       loading.value = true;
       const res = await Baservices.getMethod(`/product/${id}`);

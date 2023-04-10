@@ -1,17 +1,20 @@
+import type { IResMainProduct } from "@/commons/interface/Product.interface";
+
 interface IResCategory {
   id: number;
-  imageUrl: string;
   name: string;
-  order: number;
   status: number;
+  imageUrl: string;
+  order: number;
   createdAt: string;
+  updatedAt: string;
   childCategory: IResCategory[];
-  mainProduct: any[];
+  mainProduct: IResMainProduct[];
 }
 
-interface IItemDataTableCategory extends IResCategory {
+interface IItemTableCategory extends IResCategory {
   index: number;
   numberCateChild: number;
 }
 
-export type { IResCategory, IItemDataTableCategory };
+export type { IResCategory, IItemTableCategory };

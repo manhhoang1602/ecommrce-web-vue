@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import { Baservices } from "@/commons";
-import type { IPayloadCustomers, IResCustomer } from "@/commons/interface/Customer";
+import type { IPayloadCustomers, IResUser } from "@/commons/interface/Customer";
 
 interface IResProvince {
   key: string;
@@ -40,10 +40,10 @@ export function useListProvince() {
 
 export function useListCustomer() {
   const loading = ref<boolean>(false);
-  const listCustomer = ref<IResCustomer[]>([]);
+  const listCustomer = ref<IResUser[]>([]);
   const total = ref<number>();
 
-  const getListCustomer = async (payload: IPayloadCustomers): Promise<IResCustomer[]> => {
+  const getListCustomer = async (payload: IPayloadCustomers): Promise<IResUser[]> => {
     try {
       loading.value = true;
       const res = await Baservices.getMethod(`/customer/list`, payload);

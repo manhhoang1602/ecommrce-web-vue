@@ -76,7 +76,7 @@ import type {
   IDataEventPagination,
   IItemTableCustomer,
   IPayloadCustomers,
-  IResCustomer,
+  IResUser,
 } from "@/commons/interface";
 import dayjs from "dayjs";
 import Utils from "@/commons/Utils";
@@ -122,7 +122,7 @@ export default defineComponent({
     const { loading, total, listCustomer, getListCustomer } = useListCustomer();
 
     const dataTable = computed((): IItemTableCustomer[] => {
-      const getSales = (customer: IResCustomer, type: "perOrderSuccess" | "perAllOrder"): number => {
+      const getSales = (customer: IResUser, type: "perOrderSuccess" | "perAllOrder"): number => {
         return customer.order.reduce((previousValue, currentValue) => {
           const { totalPrice } = usePricePerOrderByOrderStatus(currentValue);
 

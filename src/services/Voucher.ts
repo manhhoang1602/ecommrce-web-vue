@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import type { IBaseResponse, IItemTableVoucher, IResItemVoucher } from "@/commons/interface";
+import type { IBaseResponse, IItemTableVoucher, IResVoucher } from "@/commons/interface";
 import { Baservices } from "@/commons";
 import Utils from "@/commons/Utils";
 
@@ -15,7 +15,7 @@ export function useListVoucher() {
         loading.value = false;
         total.value = res.body.payload.total;
         return {
-          data: res.body.payload.data.map((item: IResItemVoucher, index: number) => {
+          data: res.body.payload.data.map((item: IResVoucher, index: number) => {
             return {
               ...item,
               index: Utils.getIndex(page, index),

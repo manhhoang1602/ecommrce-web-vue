@@ -2,9 +2,9 @@ import { ref } from "vue";
 import { Baservices, Constants } from "@/commons";
 import Utils from "@/commons/Utils";
 import moment from "moment";
-import type { IItemDataTableOrder, IPayloadOrder, IResItemOrder } from "@/commons/interface/Order.interface";
+import type { IItemTableOrder, IPayloadOrder, IResOrder } from "@/commons/interface/Order.interface";
 
-function useDataTablePriceOrderDetail(orderDetail?: IResItemOrder): any {
+function useTableProductOrderDetailData(orderDetail?: IResOrder): any {
   if (orderDetail) {
     return orderDetail.listProduct.map((value, index) => {
       const price: number = Number(value.mainProduct.price ? value.mainProduct.price : value.product?.price);
@@ -29,7 +29,7 @@ function useDataTablePriceOrderDetail(orderDetail?: IResItemOrder): any {
 }
 
 function usePricePerOrderByOrderStatus(
-  order?: IResItemOrder,
+  order?: IResOrder,
   orderStatus?: number,
   isGetCancelOrder?: boolean
 ): {
@@ -86,7 +86,7 @@ function usePricePerOrderByOrderStatus(
   };
 }
 
-function usePricePerOrder(order?: IResItemOrder): {
+function usePricePerOrder(order?: IResOrder): {
   totalPrice: number;
   totalProduct: number;
   totalPriceFormat: string;
@@ -120,7 +120,7 @@ function usePricePerOrder(order?: IResItemOrder): {
   };
 }
 
-function useDiscountVoucherPrice(order?: IResItemOrder): number {
+function useDiscountVoucherPrice(order?: IResOrder): number {
   if (order) {
     if (!order.voucher) {
       return 0;
@@ -150,7 +150,7 @@ function useListOrder() {
   const loading = ref<boolean>(false);
   const total = ref<number>(0);
 
-  const getListOrder = async (payload: IPayloadOrder): Promise<IItemDataTableOrder[]> => {
+  const getListOrder = async (payload: IPayloadOrder): Promise<IItemTableOrder[]> => {
     try {
       loading.value = true;
       const res = await Baservices.getMethod(`/order/list`, payload);
@@ -158,7 +158,7 @@ function useListOrder() {
       total.value = res.body.payload.total;
       loading.value = false;
 
-      return res.body.payload.data.map((value: IResItemOrder, index: number) => {
+      return res.body.payload.data.map((value: IResOrder, index: number) => {
         const { totalPriceFormat, totalProduct } = usePricePerOrderByOrderStatus(value, undefined, true);
         return {
           ...value,
@@ -186,7 +186,7 @@ function useListOrder() {
 function useDetailOrder() {
   const loading = ref<boolean>(false);
 
-  const getDetailOrder = async (id: number): Promise<IResItemOrder | null> => {
+  const getDetailOrder = async (id: number): Promise<IResOrder | null> => {
     try {
       loading.value = true;
       const res = await Baservices.getMethod(`/order/${id}`);
@@ -208,7 +208,7 @@ function useDetailOrder() {
 }
 
 export {
-  useDataTablePriceOrderDetail,
+  useTableProductOrderDetailData,
   usePricePerOrderByOrderStatus,
   useDiscountVoucherPrice,
   useListOrder,

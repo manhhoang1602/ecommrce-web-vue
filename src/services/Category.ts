@@ -1,6 +1,6 @@
 import { ref } from "vue";
 import { Baservices } from "@/commons";
-import type { IItemDataTableCategory, IResCategory } from "@/commons/interface/Category.interface";
+import type { IItemTableCategory, IResCategory } from "@/commons/interface/Category.interface";
 import Utils from "@/commons/Utils";
 import type { IPayload } from "@/pages/Category.vue";
 import moment from "moment";
@@ -9,7 +9,7 @@ export function useListCategory() {
   const loading = ref<boolean>(false);
   const total = ref<number>(0);
 
-  const getListCategory = async (payload: IPayload): Promise<IItemDataTableCategory[]> => {
+  const getListCategory = async (payload: IPayload): Promise<IItemTableCategory[]> => {
     try {
       loading.value = true;
       const res = await Baservices.getMethod(`/category/list-category`, payload);
@@ -48,7 +48,7 @@ export function useListChildCategory() {
   const loading = ref<boolean>(false);
   const total = ref<number>(0);
 
-  const getListCategory = async (payload: IPayload): Promise<IItemDataTableCategory[]> => {
+  const getListCategory = async (payload: IPayload): Promise<IItemTableCategory[]> => {
     try {
       loading.value = true;
       const res = await Baservices.getMethod(`/category/list-child-cate`, payload);
